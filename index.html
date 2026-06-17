@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=clash-display@600,700&f[]=general-sans@400,500&display=swap">
+<style>
+  body { margin: 0; }
+  html { scroll-behavior: auto; }
+  ::selection { background: #F2541B; color: #FAF7F2; }
+  * { box-sizing: border-box; }
+  input[type=range] { accent-color: #F2541B; }
+  input::placeholder, textarea::placeholder { color: #a39a89; }
+  [data-scroller] { scrollbar-width: thin; scrollbar-color: #c9c1b1 transparent; }
+  [data-scroller]::-webkit-scrollbar { height: 8px; }
+  [data-scroller]::-webkit-scrollbar-thumb { background: #c9c1b1; border-radius: 4px; }
+  [data-scroller] a, [data-scroller] button { -webkit-user-drag: none; }
+  @media (max-width: 600px) {
+    .mh-top { grid-template-columns: 1fr 1fr !important; grid-template-areas: 'word word' 'handle sub' !important; row-gap: 11px !important; padding: 14px 0 12px !important; }
+    .mh-handle { max-width: none !important; overflow: visible !important; }
+    .mh-nav { justify-content: space-between !important; gap: 4px 8px !important; }
+    .mh-nav button { padding-top: 14px !important; padding-bottom: 13px !important; }
+    .hero-photo { aspect-ratio: 3/2 !important; }
+  }
+</style>
+</helmet>
+
+<div style="background:#FAF7F2; color:#15130F; font-family:'General Sans',sans-serif; min-height:100vh; font-weight:400; -webkit-font-smoothing:antialiased; display:flex; flex-direction:column;">
+
+  <header style="position:sticky; top:0; z-index:50; background:#FAF7F2; border-bottom:1px solid #15130F;">
+    <div style="max-width:1440px; margin:0 auto; padding:0 clamp(20px,4vw,56px);">
+      <div class="mh-top" style="display:grid; grid-template-columns:1fr auto 1fr; grid-template-areas:'handle word sub'; align-items:center; gap:14px; padding:15px 0 13px;">
+        <a class="mh-handle" href="https://instagram.com" target="_blank" style="grid-area:handle; justify-self:start; font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:12px; letter-spacing:0.03em; color:#8a847a; text-decoration:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%;" style-hover="color:#F2541B;">@michaelflorian_ai</a>
+        <button class="mh-word" onClick="{{ goHome }}" style="grid-area:word; justify-self:center; background:none; border:none; cursor:pointer; font-family:'Clash Display',sans-serif; font-weight:700; font-size:clamp(20px,2.6vw,30px); letter-spacing:-0.01em; color:#15130F; padding:0; white-space:nowrap;">Michaels Corner</button>
+        <a class="mh-sub" href="https://youtube.com" target="_blank" style="grid-area:sub; justify-self:end; font-size:13px; color:#15130F; text-decoration:none; display:inline-flex; align-items:center; gap:6px; border-bottom:1px solid #15130F; padding-bottom:2px; white-space:nowrap;" style-hover="color:#F2541B; border-color:#F2541B;">Subscribe <span>&#8599;</span></a>
+      </div>
+      <nav class="mh-nav" style="border-top:1px solid #15130F; display:flex; justify-content:space-between; gap:8px 14px; flex-wrap:wrap;">
+        <sc-for list="{{ nav }}" as="n" hint-placeholder-count="5">
+          <button onClick="{{ n.onClick }}" style="background:none; border:none; border-bottom:2px solid transparent; font-family:'General Sans',sans-serif; font-size:clamp(14px,1.4vw,16px); cursor:pointer; padding:13px 2px 12px; margin-top:-1px; color:#15130F; transition:color 150ms ease, border-color 150ms ease; {{ n.activeCss }}" style-hover="color:#F2541B;">{{ n.label }}</button>
+        </sc-for>
+      </nav>
+    </div>
+  </header>
+
+  <main style="flex:1;">
+
+    <!-- ===================== HOME ===================== -->
+    <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+      <div data-screen-label="Home">
+        <section style="max-width:1440px; margin:0 auto; padding:clamp(36px,4vw,60px) clamp(20px,4vw,56px) clamp(28px,3vw,44px); display:grid; grid-template-columns:repeat(auto-fit,minmax(min(330px,100%),1fr)); gap:clamp(28px,4vw,60px); align-items:center;">
+          <div>
+            <p style="margin:0 0 18px; font-size:14px; letter-spacing:0.08em; text-transform:uppercase; color:#F2541B; font-weight:500;">Michael Florian &middot; @michaelflorian_ai</p>
+            <h1 style="margin:0 0 20px; font-family:'Clash Display',sans-serif; font-weight:700; font-size:clamp(38px,5.2vw,72px); line-height:0.98; letter-spacing:-0.025em;">AI did not take my job. It made me faster.</h1>
+            <p style="margin:0 0 28px; font-size:clamp(17px,1.4vw,20px); line-height:1.55; max-width:44ch; color:#3f3a31;">I figure out how to use AI day to day, then I package the routines and tools and give them away. You came from my profile, so here is everything, free to take.</p>
+            <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:center;">
+              <button onClick="{{ goRoutines }}" style="background:#15130F; color:#FAF7F2; border:none; padding:15px 24px; font-family:'General Sans',sans-serif; font-size:15px; font-weight:500; cursor:pointer; display:inline-flex; align-items:center; gap:10px;">Browse the routines <span>&#8594;</span></button>
+              <a href="https://youtube.com" target="_blank" style="border:1px solid #15130F; color:#15130F; padding:15px 24px; font-size:15px; text-decoration:none; display:inline-flex; align-items:center; gap:10px;">Watch on YouTube <span style="color:#F2541B;">&#8599;</span></a>
+            </div>
+          </div>
+          <div>
+            <div class="hero-photo" style="aspect-ratio:4/5; border:1px solid #15130F; background-image:repeating-linear-gradient(45deg,#ece5d8 0 14px,#FAF7F2 14px 28px); display:flex; align-items:flex-end; padding:20px;">
+              <span style="font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:13px; color:#5b564d;">[ photo of Michael, the face from your feed ]</span>
+            </div>
+            <p style="margin:12px 2px 0; font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:12px; color:#5b564d;">Yep, that's me. Same person you followed.</p>
+          </div>
+        </section>
+
+        <!-- TOP ROUTINES -->
+        <section style="border-top:1px solid #15130F;">
+          <div style="max-width:1440px; margin:0 auto; padding:clamp(34px,3.5vw,54px) clamp(20px,4vw,56px);">
+            <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:18px; flex-wrap:wrap; margin-bottom:clamp(20px,2.5vw,30px);">
+              <div>
+                <p style="margin:0 0 8px; font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:#F2541B; font-weight:500;">Prompt routines</p>
+                <h2 style="margin:0; font-family:'Clash Display',sans-serif; font-weight:600; font-size:clamp(26px,3.2vw,40px); line-height:1; letter-spacing:-0.02em;">The three I reach for most</h2>
+              </div>
+              <button onClick="{{ goRoutines }}" style="background:none; border:none; color:#15130F; font-size:15px; cursor:pointer; font-family:'General Sans',sans-serif; display:inline-flex; align-items:center; gap:8px; white-space:nowrap; padding:0;" style-hover="color:#F2541B;">See the full library <span style="color:#F2541B;">&#8594;</span></button>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(265px,100%),1fr)); gap:clamp(14px,1.6vw,20px);">
+              <sc-for list="{{ topRoutines }}" as="r" hint-placeholder-count="3">
+                <button onClick="{{ r.onOpen }}" style="text-align:left; border:1px solid #15130F; background:none; padding:clamp(20px,2vw,26px); display:flex; flex-direction:column; cursor:pointer; font-family:'General Sans',sans-serif; transition:background 150ms ease;" style-hover="background:#f1eadd;">
+                  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:22px;">
+                    <span style="font-size:12px; letter-spacing:0.05em; text-transform:uppercase; color:#a39a89;">{{ r.folderChip }}</span>
+                    <span style="font-size:12px; letter-spacing:0.05em; text-transform:uppercase; color:#a39a89;">prompt</span>
+                  </div>
+                  <h3 style="margin:0 0 9px; font-family:'Clash Display',sans-serif; font-weight:600; font-size:22px; line-height:1.08; letter-spacing:-0.01em;">{{ r.title }}</h3>
+                  <p style="margin:0 0 20px; font-size:14px; line-height:1.5; color:#46423a; flex:1;">{{ r.desc }}</p>
+                  <span style="font-size:14px; color:#F2541B; font-weight:500;">Read &amp; copy &#8594;</span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </section>
+
+        <!-- TOOLS -->
+        <section style="border-top:1px solid #15130F;">
+          <div style="max-width:1440px; margin:0 auto; padding:clamp(34px,3.5vw,54px) clamp(20px,4vw,56px);">
+            <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:18px; flex-wrap:wrap; margin-bottom:clamp(20px,2.5vw,30px);">
+              <div>
+                <p style="margin:0 0 8px; font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:#F2541B; font-weight:500;">Tools</p>
+                <h2 style="margin:0; font-family:'Clash Display',sans-serif; font-weight:600; font-size:clamp(26px,3.2vw,40px); line-height:1; letter-spacing:-0.02em;">Small tools I built</h2>
+              </div>
+              <button onClick="{{ goTools }}" style="background:none; border:none; color:#15130F; font-size:15px; cursor:pointer; font-family:'General Sans',sans-serif; display:inline-flex; align-items:center; gap:8px; white-space:nowrap; padding:0;" style-hover="color:#F2541B;">See all tools <span style="color:#F2541B;">&#8594;</span></button>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(265px,100%),1fr)); gap:clamp(14px,1.6vw,20px);">
+              <sc-for list="{{ homeTools }}" as="t" hint-placeholder-count="3">
+                <button onClick="{{ t.onOpen }}" style="{{ t.cardStyle }}" style-hover="{{ t.cardHover }}">
+                  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:22px;">
+                    <span style="font-size:12px; letter-spacing:0.05em; text-transform:uppercase; color:{{ t.tagColor }};">{{ t.tag }}</span>
+                    <sc-if value="{{ t.isLive }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px; letter-spacing:0.05em; text-transform:uppercase; color:#F2541B; font-weight:500; border:1px solid #F2541B; padding:2px 7px;">Live</span></sc-if>
+                  </div>
+                  <h3 style="margin:0 0 9px; font-family:'Clash Display',sans-serif; font-weight:600; font-size:22px; line-height:1.08; letter-spacing:-0.01em; color:{{ t.titleColor }};">{{ t.name }}</h3>
+                  <p style="margin:0 0 20px; font-size:14px; line-height:1.5; color:{{ t.descColor }}; flex:1;">{{ t.desc }}</p>
+                  <span style="font-size:14px; color:#F2541B; font-weight:500;">{{ t.cta }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </section>
+
+        <!-- CHANNEL -->
+        <section style="border-top:1px solid #15130F;">
+          <div style="max-width:1440px; margin:0 auto; padding:clamp(34px,3.5vw,54px) clamp(20px,4vw,56px);">
+            <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:18px; flex-wrap:wrap; margin-bottom:clamp(20px,2.5vw,30px);">
+              <div>
+                <p style="margin:0 0 8px; font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:#F2541B; font-weight:500;">Channel</p>
+                <h2 style="margin:0; font-family:'Clash Display',sans-serif; font-weight:600; font-size:clamp(26px,3.2vw,40px); line-height:1; letter-spacing:-0.02em;">Watch and learn</h2>
+              </div>
+              <button onClick="{{ goChannel }}" style="background:none; border:none; color:#15130F; font-size:15px; cursor:pointer; font-family:'General Sans',sans-serif; display:inline-flex; align-items:center; gap:8px; white-space:nowrap; padding:0;" style-hover="color:#F2541B;">All videos <span style="color:#F2541B;">&#8594;</span></button>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr)); gap:clamp(16px,1.8vw,22px);">
+              <sc-for list="{{ homeVideos }}" as="v" hint-placeholder-count="4">
+                <a href="{{ v.url }}" target="_blank" style="text-decoration:none; color:#15130F; border:1px solid #15130F; display:flex; flex-direction:column;" style-hover="color:#F2541B;">
+                  <div style="aspect-ratio:16/9; background-image:repeating-linear-gradient(45deg,#ece5d8 0 13px,#FAF7F2 13px 26px); display:flex; align-items:flex-end; justify-content:space-between; padding:10px; border-bottom:1px solid #15130F;">
+                    <span style="font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:10px; color:#7c7264;">[ thumb ]</span>
+                    <span style="background:#15130F; color:#FAF7F2; font-size:11px; padding:3px 7px;">{{ v.meta }}</span>
+                  </div>
+                  <div style="padding:14px 16px 16px;">
+                    <p style="margin:0 0 6px; font-size:11px; letter-spacing:0.05em; text-transform:uppercase; color:#a39a89;">{{ v.cat }}</p>
+                    <h3 style="margin:0; font-family:'Clash Display',sans-serif; font-weight:600; font-size:17px; line-height:1.1;">{{ v.title }}</h3>
+                  </div>
+                </a>
+              </sc-for>
+            </div>
+          </div>
+        </section>
+
+        <!-- ABOUT TEASER -->
+        <section style="border-top:1px solid #15130F;">
+          <div style="max-width:1440px; margin:0 auto; padding:clamp(34px,3.5vw,54px) clamp(20px,4vw,56px) clamp(48px,5vw,80px); display:grid; grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr)); gap:clamp(28px,3vw,56px); align-items:center;">
+            <div>
+              <p style="margin:0 0 14px; font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:#F2541B; font-weight:500;">About me</p>
+              <h2 style="margin:0 0 18px; font-family:'Clash Display',sans-serif; font-weight:600; font-size:clamp(26px,3.2vw,42px); line-height:1.02; letter-spacing:-0.02em;">I figure this out in public.</h2>
+              <p style="margin:0 0 24px; font-size:17px; line-height:1.55; max-width:48ch; color:#3f3a31;">I am not a classic engineer. I ship a lot, I learn tools quickly, and I explain them plainly. More than twenty real projects, solo, with AI.</p>
+              <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:center;">
+                <button onClick="{{ goAbout }}" style="background:#15130F; color:#FAF7F2; border:none; padding:13px 22px; font-family:'General Sans',sans-serif; font-size:15px; font-weight:500; cursor:pointer; display:inline-flex; align-items:center; gap:9px;">Learn more about me <span>&#8594;</span></button>
+                <a href="https://x.com" target="_blank" style="font-size:15px; color:#15130F; text-decoration:underline; text-underline-offset:3px;" style-hover="color:#F2541B;">@michaelflorian_ai</a>
+              </div>
+            </div>
+            <div style="display:flex; align-items:baseline; gap:18px; justify-content:flex-start;">
+              <span style="font-family:'Clash Display',sans-serif; font-weight:700; font-size:clamp(56px,8vw,96px); line-height:0.8; color:#F2541B;">20+</span>
+              <span style="font-size:16px; line-height:1.4; max-width:200px; padding-top:6px;">real projects shipped solo, with AI</span>
+            </div>
+          </div>
+        </section>
+      </div>
+    </sc-if>
+
+    <!-- ===================== ROUTINES (library) ===================== -->
+    <sc-if value="{{ isRoutines }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Routines" style="max-width:1440px; margin:0 auto; padding:clamp(40px,5vw,68px) clamp(20px,4vw,56px) clamp(48px,5vw,90px);">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr)); gap:clamp(20px,3vw,48px); align-items:end; margin-bottom:clamp(24px,2.5vw,36px);">
+          <div>
+            <p style="margin:0 0 14px; font-size:14px; letter-spacing:0.08em; text-transform:uppercase; color:#F2541B; font-weight:500;">Prompt routines</p>
+            <h1 style="margin:0; font-family:'Clash Display',sans-serif; font-weight:700; font-size:clamp(36px,5vw,64px); line-height:0.98; letter-spacing:-0.02em;">The prompt library</h1>
+          </div>
+          <p style="margin:0; font-size:16px; line-height:1.55; color:#46423a; max-width:46ch;">Sorted into folders so you can find your kind of prompt. Pick a folder, search, then open any prompt to read the whole thing and copy it.</p>
+        </div>
+
+        <div style="display:flex; flex-wrap:wrap; gap:14px 16px; align-items:center; justify-content:space-between; border-top:2px solid #15130F; padding-top:18px; margin-bottom:clamp(26px,3vw,40px);">
+          <div style="display:flex; flex-wrap:wrap; gap:8px;">
+            <sc-for list="{{ routineChips }}" as="c" hint-placeholder-count="6">
+              <button onClick="{{ c.onClick }}" style="{{ c.style }}" style-hover="border-color:#F2541B;">{{ c.label }}</button>
+            </sc-for>
+          </div>
+          <input value="{{ routineQuery }}" onInput="{{ setRoutineQuery }}" placeholder="Search prompts" style="border:1px solid #15130F; background:#FAF7F2; padding:10px 15px; font-family:'General Sans',sans-serif; font-size:14px; min-width:210px; color:#15130F; border-radius:2px;" />
+        </div>
+
+        <sc-for list="{{ routineFolders }}" as="f" hint-placeholder-count="3">
+          <section style="margin-bottom:clamp(40px,4vw,60px);">
+            <div style="display:flex; align-items:baseline; gap:14px; margin-bottom:6px; flex-wrap:wrap;">
+              <h2 style="margin:0; font-family:'Clash Display',sans-serif; font-weight:600; font-size:clamp(22px,2.6vw,32px); line-height:1; letter-spacing:-0.01em;">{{ f.name }}</h2>
+              <span style="font-size:13px; color:#a39a89;">{{ f.count }}</span>
+            </div>
+            <p style="margin:0 0 6px; font-size:15px; line-height:1.5; color:#5b564d; max-width:60ch;">{{ f.blurb }}</p>
+            <div style="border-top:1px solid #15130F;">
+              <sc-for list="{{ f.items }}" as="item" hint-placeholder-count="3">
+                <div onClick="{{ item.onOpen }}" style="display:grid; grid-template-columns:46px minmax(0,1.2fr) minmax(0,1fr) auto; gap:clamp(14px,2vw,28px); align-items:baseline; padding:clamp(16px,1.8vw,24px) 0; cursor:pointer; border-bottom:1px solid #d8d2c6;" style-hover="background:#f1eadd;">
+                  <span style="font-family:'Clash Display',sans-serif; font-weight:600; font-size:16px; color:#F2541B;">{{ item.num }}</span>
+                  <h3 style="margin:0; font-family:'Clash Display',sans-serif; font-weight:600; font-size:clamp(19px,2vw,26px); line-height:1.08; letter-spacing:-0.01em;">{{ item.title }}</h3>
+                  <p style="margin:0; font-size:15px; line-height:1.45; color:#46423a;">{{ item.desc }}</p>
+                  <span style="font-size:13px; letter-spacing:0.05em; text-transform:uppercase; white-space:nowrap; color:#F2541B;">Open &#8594;</span>
+                </div>
+              </sc-for>
+            </div>
+          </section>
+        </sc-for>
+        <sc-if value="{{ routinesEmpty }}" hint-placeholder-val="{{ false }}">
+          <p style="font-size:16px; color:#5b564d; padding:30px 0;">No prompts match that search. Try another word, or pick a different folder.</p>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <!-- ===================== PROMPT DETAIL ===================== -->
+    <sc-if value="{{ isPrompt }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Prompt detail" style="max-width:1200px; margin:0 auto; padding:clamp(28px,3.5vw,48px) clamp(20px,4vw,56px) clamp(48px,5vw,90px);">
+        <button onClick="{{ goRoutines }}" style="background:none; border:none; color:#5b564d; font-family:'General Sans',sans-serif; font-size:14px; cursor:pointer; padding:0; display:inline-flex; align-items:center; gap:8px; margin-bottom:26px;" style-hover="color:#F2541B;"><span>&#8592;</span> Back to the prompt library</button>
+        <p style="margin:0 0 12px; font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:#F2541B; font-weight:500;">{{ selPrompt.folderName }}</p>
+        <h1 style="margin:0 0 16px; font-family:'Clash Display',sans-serif; font-weight:700; font-size:clamp(32px,4.4vw,54px); line-height:1; letter-spacing:-0.02em; max-width:20ch;">{{ selPrompt.title }}</h1>
+        <p style="margin:0 0 32px; font-size:18px; line-height:1.5; color:#3f3a31; max-width:60ch;"><span style="font-weight:500;">When to use it. </span>{{ selPrompt.when }}</p>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(290px,100%),1fr)); gap:clamp(24px,3vw,44px); align-items:start;">
+          <div style="grid-column:1 / -1; max-width:820px;">
+            <div style="border:1px solid #15130F;">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 18px; border-bottom:1px solid #15130F; background:#15130F; color:#f3ede2; flex-wrap:wrap;">
+                <span style="font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:12px; letter-spacing:0.05em; text-transform:uppercase; color:#b9b2a4;">The full prompt</span>
+                <button onClick="{{ selPrompt.onCopy }}" style="background:#F2541B; color:#FAF7F2; border:none; padding:9px 18px; font-family:'General Sans',sans-serif; font-size:14px; font-weight:500; cursor:pointer;">{{ selPrompt.copyLabel }}</button>
+              </div>
+              <div style="background:#15130F; color:#f3ede2; font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:14px; line-height:1.7; padding:24px 26px; white-space:pre-wrap;">{{ selPrompt.prompt }}</div>
+            </div>
+          </div>
+
+          <div style="border:1px solid #15130F; padding:clamp(22px,2.2vw,30px);">
+            <h3 style="margin:0 0 14px; font-family:'Clash Display',sans-serif; font-weight:600; font-size:20px; letter-spacing:-0.01em;">What to fill in</h3>
+            <p style="margin:0 0 16px; font-size:14px; line-height:1.5; color:#5b564d;">Replace the parts in brackets with your own context before you send it.</p>
+            <div style="display:flex; flex-direction:column; gap:9px;">
+              <sc-for list="{{ selPrompt.fills }}" as="fill" hint-placeholder-count="2">
+                <div style="display:flex; align-items:flex-start; gap:10px;">
+                  <span style="color:#F2541B; font-family:ui-monospace,monospace; font-size:13px; line-height:1.5; margin-top:1px;">&#9656;</span>
+                  <span style="font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:13px; line-height:1.5; color:#2c2922;">{{ fill }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ selPrompt.noFills }}" hint-placeholder-val="{{ false }}">
+              <p style="margin:0; font-size:14px; color:#5b564d;">Nothing to fill in. Copy it and go.</p>
+            </sc-if>
+          </div>
+
+          <div style="border:1px solid #15130F; padding:clamp(22px,2.2vw,30px);">
+            <h3 style="margin:0 0 14px; font-family:'Clash Display',sans-serif; font-weight:600; font-size:20px; letter-spacing:-0.01em;">How I use it</h3>
+            <p style="margin:0 0 12px; font-size:15px; line-height:1.55; color:#3f3a31;">Paste it into your AI tool, swap in your context, and run it. If the first answer is close but not right, tell it what to change and run again.</p>
+            <p style="margin:0; font-size:15px; line-height:1.55; color:#3f3a31;">Works in ChatGPT, Claude, and Gemini with small edits. Keep the ones that work in your own notes so you build a library too.</p>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ===================== TOOLS (library) ===================== -->
+    <sc-if value="{{ isTools }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Tools" style="max-width:1440px; margin:0 auto; padding:clamp(40px,5vw,68px) clamp(20px,4vw,56px) clamp(48px,5vw,90px);">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr)); gap:clamp(20px,3vw,48px); align-items:end; margin-bottom:clamp(24px,2.5vw,36px);">
+          <div>
+            <p style="margin:0 0 14px; font-size:14px; letter-spacing:0.08em; text-transform:uppercase; color:#F2541B; font-weight:500;">Tools &amp; calculators</p>
+            <h1 style="margin:0; font-family:'Clash Display',sans-serif; font-weight:700; font-size:clamp(36px,5vw,64px); line-height:0.98; letter-spacing:-0.02em;">The tool shed</h1>
+          </div>
+          <p style="margin:0; font-size:16px; line-height:1.55; color:#46423a; max-width:46ch;">Small things I built to make AI cheaper and easier. Sorted by what they do. Open any one to use it. Swipe a row to see more.</p>
+        </div>
+
+        <div style="display:flex; flex-wrap:wrap; gap:14px 16px; align-items:center; justify-content:space-between; border-top:2px solid #15130F; padding-top:18px; margin-bottom:clamp(28px,3vw,40px);">
+          <div style="display:flex; flex-wrap:wrap; gap:8px;">
+            <sc-for list="{{ toolChips }}" as="c" hint-placeholder-count="4">
+              <button onClick="{{ c.onClick }}" style="{{ c.style }}" style-hover="border-color:#F2541B;">{{ c.label }}</button>
+            </sc-for>
+          </div>
+          <input value="{{ toolQuery }}" onInput="{{ setToolQuery }}" placeholder="Search tools" style="border:1px solid #15130F; background:#FAF7F2; padding:10px 15px; font-family:'General Sans',sans-serif; font-size:14px; min-width:210px; color:#15130F; border-radius:2px;" />
+        </div>
+
+        <sc-for list="{{ toolFolders }}" as="cat" hint-placeholder-count="3">
+          <section style="margin-bottom:clamp(38px,3.5vw,52px);">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:16px; flex-wrap:wrap;">
+              <div style="display:flex; align-items:baseline; gap:12px;">
+                <h2 style="margin:0; font-family:'Clash Display',sans-serif; font-weight:600; font-size:clamp(22px,2.6vw,30px); line-height:1; letter-spacing:-0.01em;">{{ cat.name }}</h2>
+                <span style="font-size:13px; color:#a39a89;">{{ cat.count }}</span>
+              </div>
+              <div style="display:flex; gap:8px;">
+                <button onClick="{{ cat.scrollPrev }}" style="width:40px; height:40px; border:1px solid #15130F; background:none; color:#15130F; font-size:17px; cursor:pointer; display:flex; align-items:center; justify-content:center;" style-hover="background:#15130F; color:#FAF7F2;">&#8592;</button>
+                <button onClick="{{ cat.scrollNext }}" style="width:40px; height:40px; border:1px solid #15130F; background:none; color:#15130F; font-size:17px; cursor:pointer; display:flex; align-items:center; justify-content:center;" style-hover="background:#15130F; color:#FAF7F2;">&#8594;</button>
+              </div>
+            </div>
+            <div data-scroller style="display:flex; gap:clamp(14px,1.6vw,20px); overflow-x:auto; -webkit-overflow-scrolling:touch; cursor:grab; padding:2px 2px 12px;">
+              <sc-for list="{{ cat.items }}" as="t" hint-placeholder-count="4">
+                <button onClick="{{ t.onOpen }}" style="scroll-snap-align:start; flex:0 0 clamp(258px,26vw,300px); text-align:left; border:1px solid #15130F; background:none; padding:clamp(20px,2vw,26px); display:flex; flex-direction:column; cursor:pointer; font-family:'General Sans',sans-serif; transition:background 150ms ease;" style-hover="background:#f1eadd;">
+                  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:22px;">
+                    <span style="font-size:12px; letter-spacing:0.05em; text-transform:uppercase; color:#a39a89;">{{ t.tag }}</span>
+                    <sc-if value="{{ t.isLive }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px; letter-spacing:0.05em; text-transform:uppercase; color:#F2541B; font-weight:500; border:1px solid #F2541B; padding:2px 7px;">Live</span></sc-if>
+                  </div>
+                  <h3 style="margin:0 0 9px; font-family:'Clash Display',sans-serif; font-weight:600; font-size:21px; line-height:1.08; letter-spacing:-0.01em;">{{ t.name }}</h3>
+                  <p style="margin:0 0 20px; font-size:14px; line-height:1.5; color:#46423a; flex:1;">{{ t.desc }}</p>
+                  <span style="font-size:14px; color:#F2541B; font-weight:500;">{{ t.cta }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </section>
+        </sc-for>
+        <sc-if value="{{ toolsEmpty }}" hint-placeholder-val="{{ false }}">
+          <p style="font-size:16px; color:#5b564d; padding:30px 0;">No tools match that search. Try another word, or pick a different category.</p>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <!-- ===================== TOOL DETAIL ===================== -->
+    <sc-if value="{{ isTool }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Tool detail" style="max-width:1200px; margin:0 auto; padding:clamp(28px,3.5vw,48px) clamp(20px,4vw,56px) clamp(48px,5vw,90px);">
+        <button onClick="{{ goTools }}" style="background:none; border:none; color:#5b564d; font-family:'General Sans',sans-serif; font-size:14px; cursor:pointer; padding:0; display:inline-flex; align-items:center; gap:8px; margin-bottom:26px;" style-hover="color:#F2541B;"><span>&#8592;</span> Back to the tool shed</button>
+        <p style="margin:0 0 12px; font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:#F2541B; font-weight:500;">{{ selTool.cat }}</p>
+        <h1 style="margin:0 0 16px; font-family:'Clash Display',sans-serif; font-weight:700; font-size:clamp(32px,4.4vw,54px); line-height:1; letter-spacing:-0.02em; max-width:18ch;">{{ selTool.name }}</h1>
+        <p style="margin:0 0 32px; font-size:18px; line-height:1.5; color:#3f3a31; max-width:60ch;">{{ selTool.desc }}</p>
+
+        <sc-if value="{{ selTool.isCost }}" hint-placeholder-val="{{ true }}">
+          <div style="border:1px solid #15130F; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));">
+            <div style="padding:clamp(24px,3vw,38px); border-right:1px solid #15130F;">
+              <div style="margin-bottom:24px;">
+                <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;"><label style="font-size:15px;">Messages per day</label><span style="font-family:'Clash Display',sans-serif; font-weight:600; font-size:20px;">{{ calcPer }}</span></div>
+                <input type="range" min="1" max="200" value="{{ calcPer }}" onInput="{{ setPer }}" style="width:100%;" />
+              </div>
+              <div style="margin-bottom:24px;">
+                <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;"><label style="font-size:15px;">Words you send</label><span style="font-family:'Clash Display',sans-serif; font-weight:600; font-size:20px;">{{ calcWin }}</span></div>
+                <input type="range" min="10" max="1000" step="10" value="{{ calcWin }}" onInput="{{ setWin }}" style="width:100%;" />
+              </div>
+              <div style="margin-bottom:28px;">
+                <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;"><label style="font-size:15px;">Words it writes back</label><span style="font-family:'Clash Display',sans-serif; font-weight:600; font-size:20px;">{{ calcWout }}</span></div>
+                <input type="range" min="10" max="2000" step="10" value="{{ calcWout }}" onInput="{{ setWout }}" style="width:100%;" />
+              </div>
+              <p style="margin:0 0 10px; font-size:15px;">Model tier</p>
+              <div style="display:flex; border:1px solid #15130F;">
+                <button onClick="{{ setTierFast }}" style="{{ tierStyleFast }}">Fast</button>
+                <button onClick="{{ setTierBalanced }}" style="{{ tierStyleBalanced }}">Balanced</button>
+                <button onClick="{{ setTierTop }}" style="{{ tierStyleTop }}">Top</button>
+              </div>
+            </div>
+            <div style="padding:clamp(24px,3vw,38px); background:#15130F; color:#f3ede2; display:flex; flex-direction:column; justify-content:space-between; min-height:300px;">
+              <div>
+                <p style="margin:0 0 10px; font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:#F2541B; font-weight:500;">Estimated cost</p>
+                <div style="font-family:'Clash Display',sans-serif; font-weight:700; font-size:clamp(48px,7vw,84px); line-height:0.9; letter-spacing:-0.02em;">{{ calcMonthly }}</div>
+                <p style="margin:8px 0 0; font-size:16px; color:#b9b2a4;">per month, about {{ calcDaily }} a day</p>
+              </div>
+              <p style="margin:30px 0 0; font-size:14px; line-height:1.55; color:#b9b2a4;">{{ calcNote }}</p>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ selTool.isProto }}" hint-placeholder-val="{{ false }}">
+          <div style="border:1px solid #15130F; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));">
+            <div style="padding:clamp(24px,3vw,36px); border-right:1px solid #15130F;">
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:16px;">
+                <span style="font-size:11px; letter-spacing:0.05em; text-transform:uppercase; color:#F2541B; font-weight:500; border:1px solid #F2541B; padding:2px 8px;">Prototype</span>
+                <span style="font-size:13px; color:#5b564d;">Layout preview</span>
+              </div>
+              <label style="display:block; font-size:15px; margin-bottom:8px;">{{ selTool.inputLabel }}</label>
+              <textarea value="{{ toolInput }}" onInput="{{ setToolInput }}" placeholder="{{ selTool.placeholder }}" style="width:100%; min-height:150px; border:1px solid #15130F; background:#FAF7F2; padding:14px; font-family:'General Sans',sans-serif; font-size:15px; line-height:1.5; color:#15130F; resize:vertical;"></textarea>
+              <button onClick="{{ runTool }}" style="margin-top:14px; background:#15130F; color:#FAF7F2; border:none; padding:13px 22px; font-family:'General Sans',sans-serif; font-size:15px; font-weight:500; cursor:pointer;">{{ selTool.runLabel }}</button>
+            </div>
+            <div style="padding:clamp(24px,3vw,36px); background:#15130F; color:#f3ede2; display:flex; flex-direction:column; min-height:280px;">
+              <p style="margin:0 0 14px; font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:#F2541B; font-weight:500;">Result</p>
+              <div style="flex:1; font-size:15px; line-height:1.6; color:#d9d2c5;">{{ toolOutput }}</div>
+            </div>
+          </div>
+        </sc-if>
+
+        <div style="border:1px solid #15130F; border-top:none; padding:clamp(22px,2.2vw,30px); max-width:none;">
+          <h3 style="margin:0 0 10px; font-family:'Clash Display',sans-serif; font-weight:600; font-size:20px; letter-spacing:-0.01em;">How to use it</h3>
+          <p style="margin:0; font-size:16px; line-height:1.55; color:#3f3a31; max-width:70ch;">{{ selTool.how }}</p>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ===================== CHANNEL ===================== -->
+    <sc-if value="{{ isChannel }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Channel" style="max-width:1440px; margin:0 auto; padding:clamp(40px,5vw,68px) clamp(20px,4vw,56px) clamp(48px,5vw,90px);">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr)); gap:clamp(20px,3vw,48px); align-items:end; margin-bottom:clamp(24px,2.5vw,36px);">
+          <div>
+            <p style="margin:0 0 14px; font-size:14px; letter-spacing:0.08em; text-transform:uppercase; color:#F2541B; font-weight:500;">On the channel</p>
+            <h1 style="margin:0; font-family:'Clash Display',sans-serif; font-weight:700; font-size:clamp(36px,5vw,64px); line-height:0.98; letter-spacing:-0.02em;">Watch and learn</h1>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:14px; align-items:flex-start;">
+            <p style="margin:0; font-size:16px; line-height:1.55; color:#46423a; max-width:46ch;">Plain talk, no hype. Everything links out to YouTube. Filter by topic, or swipe a row to see more.</p>
+            <a href="https://youtube.com" target="_blank" style="background:#15130F; color:#FAF7F2; padding:13px 22px; text-decoration:none; font-size:15px; display:inline-flex; gap:10px;">Subscribe on YouTube <span style="color:#F2541B;">&#8599;</span></a>
+          </div>
+        </div>
+
+        <a href="{{ vFeatured.url }}" target="_blank" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr)); border:1px solid #15130F; text-decoration:none; color:#15130F; margin-bottom:clamp(30px,3.5vw,46px);">
+          <div style="aspect-ratio:16/9; background-image:repeating-linear-gradient(45deg,#ece5d8 0 16px,#FAF7F2 16px 32px); display:flex; align-items:flex-end; justify-content:space-between; padding:18px; border-right:1px solid #15130F;">
+            <span style="font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:12px; color:#7c7264;">[ video thumbnail 16:9 ]</span>
+            <span style="background:#15130F; color:#FAF7F2; font-size:12px; padding:4px 9px;">{{ vFeatured.meta }}</span>
+          </div>
+          <div style="padding:clamp(24px,3vw,40px); display:flex; flex-direction:column; justify-content:center;">
+            <p style="margin:0 0 10px; font-size:13px; letter-spacing:0.06em; text-transform:uppercase; color:#F2541B; font-weight:500;">Latest &middot; {{ vFeatured.cat }}</p>
+            <h2 style="margin:0 0 12px; font-family:'Clash Display',sans-serif; font-weight:600; font-size:clamp(26px,3vw,40px); line-height:1.02; letter-spacing:-0.02em;">{{ vFeatured.title }}</h2>
+            <p style="margin:0; font-size:16px; line-height:1.5; color:#46423a; max-width:48ch;">{{ vFeatured.desc }}</p>
+          </div>
+        </a>
+
+        <div style="display:flex; flex-wrap:wrap; gap:14px 16px; align-items:center; justify-content:space-between; border-top:2px solid #15130F; padding-top:18px; margin-bottom:clamp(26px,3vw,38px);">
+          <div style="display:flex; flex-wrap:wrap; gap:8px;">
+            <sc-for list="{{ videoChips }}" as="c" hint-placeholder-count="5">
+              <button onClick="{{ c.onClick }}" style="{{ c.style }}" style-hover="border-color:#F2541B;">{{ c.label }}</button>
+            </sc-for>
+          </div>
+          <input value="{{ videoQuery }}" onInput="{{ setVideoQuery }}" placeholder="Search videos" style="border:1px solid #15130F; background:#FAF7F2; padding:10px 15px; font-family:'General Sans',sans-serif; font-size:14px; min-width:210px; color:#15130F; border-radius:2px;" />
+        </div>
+
+        <sc-for list="{{ videoFolders }}" as="cat" hint-placeholder-count="4">
+          <section style="margin-bottom:clamp(38px,3.5vw,52px);">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:16px; flex-wrap:wrap;">
+              <div style="display:flex; align-items:baseline; gap:12px;">
+                <h2 style="margin:0; font-family:'Clash Display',sans-serif; font-weight:600; font-size:clamp(22px,2.6vw,30px); line-height:1; letter-spacing:-0.01em;">{{ cat.name }}</h2>
+                <span style="font-size:13px; color:#a39a89;">{{ cat.count }}</span>
+              </div>
+              <div style="display:flex; gap:8px;">
+                <button onClick="{{ cat.scrollPrev }}" style="width:40px; height:40px; border:1px solid #15130F; background:none; color:#15130F; font-size:17px; cursor:pointer; display:flex; align-items:center; justify-content:center;" style-hover="background:#15130F; color:#FAF7F2;">&#8592;</button>
+                <button onClick="{{ cat.scrollNext }}" style="width:40px; height:40px; border:1px solid #15130F; background:none; color:#15130F; font-size:17px; cursor:pointer; display:flex; align-items:center; justify-content:center;" style-hover="background:#15130F; color:#FAF7F2;">&#8594;</button>
+              </div>
+            </div>
+            <div data-scroller style="display:flex; gap:clamp(16px,1.8vw,22px); overflow-x:auto; -webkit-overflow-scrolling:touch; cursor:grab; padding:2px 2px 12px;">
+              <sc-for list="{{ cat.items }}" as="v" hint-placeholder-count="4">
+                <a href="{{ v.url }}" target="_blank" style="scroll-snap-align:start; flex:0 0 clamp(270px,28vw,320px); text-decoration:none; color:#15130F; border:1px solid #15130F; display:flex; flex-direction:column;" style-hover="color:#F2541B;">
+                  <div style="aspect-ratio:16/9; background-image:repeating-linear-gradient(45deg,#ece5d8 0 14px,#FAF7F2 14px 28px); display:flex; align-items:flex-end; justify-content:space-between; padding:12px; border-bottom:1px solid #15130F;">
+                    <span style="font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:11px; color:#7c7264;">[ thumb ]</span>
+                    <span style="background:#15130F; color:#FAF7F2; font-size:11px; padding:3px 8px;">{{ v.meta }}</span>
+                  </div>
+                  <div style="padding:16px 18px 18px;">
+                    <h3 style="margin:0 0 6px; font-family:'Clash Display',sans-serif; font-weight:600; font-size:19px; line-height:1.1;">{{ v.title }}</h3>
+                    <p style="margin:0; font-size:14px; line-height:1.45; color:#46423a;">{{ v.desc }}</p>
+                  </div>
+                </a>
+              </sc-for>
+            </div>
+          </section>
+        </sc-for>
+        <sc-if value="{{ videosEmpty }}" hint-placeholder-val="{{ false }}">
+          <p style="font-size:16px; color:#5b564d; padding:30px 0;">No videos match that search. Try another word, or pick a different topic.</p>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <!-- ===================== ABOUT ===================== -->
+    <sc-if value="{{ isAbout }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="About" style="max-width:1440px; margin:0 auto; padding:clamp(40px,5vw,68px) clamp(20px,4vw,56px) clamp(48px,5vw,90px); display:grid; grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr)); gap:clamp(32px,4vw,64px); align-items:start;">
+        <div>
+          <div style="aspect-ratio:4/5; border:1px solid #15130F; background-image:repeating-linear-gradient(45deg,#ece5d8 0 14px,#FAF7F2 14px 28px); display:flex; align-items:flex-end; padding:20px;">
+            <span style="font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:13px; color:#5b564d;">[ portrait of Michael ]</span>
+          </div>
+        </div>
+        <div>
+          <p style="margin:0 0 16px; font-size:14px; letter-spacing:0.08em; text-transform:uppercase; color:#F2541B; font-weight:500;">About me</p>
+          <h1 style="margin:0 0 24px; font-family:'Clash Display',sans-serif; font-weight:700; font-size:clamp(34px,4.5vw,58px); line-height:1; letter-spacing:-0.02em;">I am Michael, and I figure this out in public.</h1>
+          <p style="margin:0 0 18px; font-size:19px; line-height:1.55; max-width:54ch;">I am not a classic engineer. I use AI to build software fast, and I learn new tools quickly. My edge is volume and speed, plus the habit of explaining things in plain words.</p>
+          <p style="margin:0 0 18px; font-size:19px; line-height:1.55; max-width:54ch;">I have shipped more than twenty real projects solo. This site is where I hand over the routines and tools I actually use.</p>
+          <p style="margin:0 0 34px; font-size:19px; line-height:1.55; max-width:54ch;">Take them. Tell me what worked.</p>
+          <div style="display:flex; gap:14px; flex-wrap:wrap;">
+            <a href="https://youtube.com" target="_blank" style="border:1px solid #15130F; padding:13px 22px; text-decoration:none; color:#15130F; font-size:15px;">YouTube</a>
+            <a href="https://x.com" target="_blank" style="border:1px solid #15130F; padding:13px 22px; text-decoration:none; color:#15130F; font-size:15px;">@michaelflorian_ai</a>
+            <a href="https://instagram.com" target="_blank" style="border:1px solid #15130F; padding:13px 22px; text-decoration:none; color:#15130F; font-size:15px;">Instagram</a>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+  </main>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      page: 'home',
+      selPromptId: null,
+      selToolId: null,
+      copiedId: null,
+      routineFilter: 'all', routineQuery: '',
+      toolFilter: 'all', toolQuery: '',
+      videoFilter: 'all', videoQuery: '',
+      toolInput: '', toolRan: false,
+      per: 20, win: 120, wout: 300, tier: 'balanced',
+    };
+    this.tiers = {
+      fast: { in: 0.8, out: 4, label: 'a fast, cheap model' },
+      balanced: { in: 3, out: 15, label: 'a balanced model' },
+      top: { in: 15, out: 75, label: 'the top model' },
+    };
+
+    this.routineFolders = [
+      { id: 'beginners', chip: 'Beginners', name: 'Best prompts for beginners', blurb: 'Start here. Simple prompts that work on your first day.', items: [
+        { title: 'Sort my day in five minutes', desc: 'Paste your inbox and tasks, get a ranked plan.', when: 'When your inbox and task list feel like a pile and you do not know where to start.',
+          prompt: "You are my calm, no-nonsense chief of staff. Your job is to turn a messy pile into a clear plan I can act on in the next hour.\n\nHere is everything on my plate right now:\n[paste your inbox, messages, and to-do items here]\n\nDo this:\n1. Sort every item into one of three groups: Do Now (today), Do Later (this week), or Drop (not worth my time).\n2. For the Do Now group, put the items in the order I should actually do them, with a one line reason for each.\n3. Point out anything that feels urgent but is not actually important.\n4. If any two items depend on each other, say which comes first.\n\nRules:\n- Keep the whole answer to one screen.\n- Use plain words. No corporate language, no filler.\n- Do not invent tasks I did not give you.\n\nFinish with a single sentence: the one thing that matters most today." },
+        { title: 'Explain it like I am new', desc: 'Turn jargon into plain words with one example.', when: 'When someone uses a word or idea you do not understand and you do not want to feel silly asking.',
+          prompt: "I am completely new to [topic] and I want to understand it without any jargon.\n\nExplain it in three short parts:\n1. What it is, in two or three plain sentences.\n2. Why people use it, with one everyday example I would recognise.\n3. The one thing beginners most often get wrong about it.\n\nKeep every sentence short. If you must use a technical word, put its plain meaning right after it in brackets. Do not assume I know anything.\n\nAt the end, give me one small thing I could try today to see it in action." },
+        { title: 'Make AI ask me questions first', desc: 'Get a sharper answer by being interviewed first.', when: 'When your request is fuzzy and a vague prompt would give a vague answer.',
+          prompt: "I want help with [describe your goal in one line].\n\nBefore you give me any answer, act like a thoughtful expert taking a brief. Ask me the three to five questions you most need answered to do this really well. Ask them one short question at a time, wait for my reply, and do not move on until I answer.\n\nOnce you have what you need, say 'Ready' and give me your best response based on my answers. If I give a weak or unclear answer, gently push for a better one before you continue." },
+      ]},
+      { id: 'writing', chip: 'Writing', name: 'Best prompts for writing', blurb: 'Draft faster and still sound like yourself.', items: [
+        { title: 'Draft fast, then sound like me', desc: 'Rewrite a rough draft in your own voice.', when: 'When you have a draft and want it to read the way you actually talk.',
+          prompt: "Rewrite the text below so it sounds like me.\n\nMy voice:\n- Short, plain sentences.\n- First person.\n- Warm but direct.\n- Common words, no buzzwords, no hype.\n- Never use em dashes. Use commas and full stops.\n\nKeep my meaning and my main points. Do not add new claims or numbers. Do not make it longer. If a sentence is confusing, make it clearer, not fancier.\n\nText to rewrite:\n[paste your draft here]\n\nGive me the rewrite only, with no notes before or after." },
+        { title: 'One video into a week of posts', desc: 'A transcript becomes five short posts.', when: 'When you record one video and want a week of posts from it.',
+          prompt: "Here is the transcript of my latest video:\n[paste transcript here]\n\nPull out the five strongest, separate ideas. For each one, write a short post in my voice:\n- Under 60 words.\n- A clear, plain first line that makes someone stop.\n- One idea per post, no rambling.\n- No hashtags, no emojis, no em dashes.\n\nNumber the posts 1 to 5. After each post, add one short line in brackets suggesting the best day to post it across a week." },
+        { title: 'Cut this until it is sharp', desc: 'Halve the length, keep the meaning.', when: 'When something you wrote is too long and you cannot see what to remove.',
+          prompt: "Cut the text below by about half without losing the meaning or my voice.\n\nRemove:\n- Filler words and throat-clearing.\n- Hedging like 'I think maybe' or 'sort of'.\n- Repeated points and anything that does not earn its place.\n\nKeep:\n- The main argument.\n- Any concrete example or number.\n- My plain, direct tone.\n\nText:\n[paste here]\n\nReturn only the shorter version. Then, on one line, tell me roughly what percent shorter it is." },
+      ]},
+      { id: 'building', chip: 'Building', name: 'Best prompts for building', blurb: 'Go from a rough idea to working software.', items: [
+        { title: 'Turn a rough idea into a build plan', desc: 'A messy idea becomes a clear spec.', when: 'When you have an idea in your head and need a plan before you build.',
+          prompt: "I want to build this:\n[describe your idea in plain words, even if it is messy]\n\nWrite me a short, practical build spec:\n1. The core job it does, in one sentence.\n2. The screens or pages it needs, as a short list.\n3. The data it has to store.\n4. The first three things I should build, in order.\n\nThen list any decision I need to make before starting. Ask me up to three questions, but only if something is genuinely unclear. Keep it tight enough to read in two minutes. Assume I will build it with an AI coding tool, not by hand." },
+        { title: 'Fix code I cannot read', desc: 'Plain cause, then the exact change.', when: 'When you hit an error and you are not sure what the code even does.',
+          prompt: "I hit an error and I am not a strong coder, so explain things simply.\n\nThe error message:\n[paste the full error here]\n\nThe code around it:\n[paste the relevant file or section here]\n\nDo this:\n1. In one short paragraph a non-coder can follow, explain what caused the error.\n2. Give me the exact change to make, showing the before and after lines.\n3. Tell me how to check that it worked.\n\nDo not rewrite the whole file. Do not lecture me. If you need one more piece of information to be sure, ask for it first." },
+        { title: 'Plan the smallest first version', desc: 'Define the simplest thing worth shipping.', when: 'When your idea is growing and you need to ship something small first.',
+          prompt: "Here is my idea:\n[describe it]\n\nHelp me find the smallest version worth shipping.\n1. List only the features it must have to be useful to one real person.\n2. List the features I want to add later, so I can park them with a clear conscience.\n3. Name the one feature that, if I get it right, makes the whole thing worth using.\n\nBe strict. If a feature is nice but not needed for version one, put it in the later list. Keep the answer short." },
+      ]},
+      { id: 'work', chip: 'Daily work', name: 'Best prompts for daily work', blurb: 'Small routines that save time every day.', items: [
+        { title: 'Summarise this thread', desc: 'Long thread to three bullets and a next step.', when: 'When a long thread needs a decision and you do not want to reread all of it.',
+          prompt: "Summarise the thread below for me.\n\nGive me:\n1. Three bullets covering what actually matters.\n2. Any decision that was made, or is still open.\n3. The single next action I should take, and who it is waiting on.\n\nIgnore small talk and repeated points. Keep it plain and short.\n\nThread:\n[paste the thread here]" },
+        { title: 'Turn notes into a clear email', desc: 'Rough notes become a short message.', when: 'When you have rough notes and need to send a clean, friendly message.',
+          prompt: "Turn my rough notes into a short, friendly email.\n\nRules:\n- Under 120 words.\n- First person, warm but direct.\n- One clear ask or next step.\n- No buzzwords, no em dashes.\n\nNotes:\n[paste your notes here]\n\nGive me a subject line and the email body. If anything important seems missing, add one short line at the end telling me what to double check." },
+        { title: 'Prep me for this meeting', desc: 'Three points and two questions.', when: 'When you have a meeting soon and want to walk in ready.',
+          prompt: "I have a meeting about [topic] with [who, and their role].\n\nGet me ready in under a minute of reading:\n1. Three points I should make.\n2. Two good questions I should ask.\n3. One thing that could go wrong, and how to handle it calmly.\n\nKeep it plain and specific. Do not pad it." },
+      ]},
+      { id: 'learning', chip: 'Learning', name: 'Best prompts for learning', blurb: 'Get up to speed on anything, fast.', items: [
+        { title: 'Learn a new topic in twenty minutes', desc: 'A focused brief from zero to useful.', when: 'When you need to get useful on something new, fast.',
+          prompt: "I know nothing about [topic] and I have twenty minutes.\n\nTeach me what actually matters:\n1. What it is and why people care.\n2. The core ideas, in plain words, as short sections.\n3. The three mistakes beginners make.\n4. One small thing I can try today to make it stick.\n\nUse everyday language. Skip the history lesson. If a word is unavoidable, define it in brackets right after you use it." },
+        { title: 'Teach me with a quiz', desc: 'Learn by answering, not just reading.', when: 'When you learn better by answering questions than by reading.',
+          prompt: "Teach me [topic] by quizzing me, not by lecturing.\n\nAsk me one question at a time. After each answer:\n- Tell me if I am right or close.\n- Give a one or two sentence explanation.\n- Then ask the next question.\n\nStart easy and get harder as I get them right. If I get one wrong, explain it simply and ask a similar one before moving on. Keep going until I have seen the main ideas, then give me a short recap of what I learned." },
+      ]},
+    ];
+
+    this.tools = [
+      { id: 'cost', name: 'AI cost calculator', cat: 'Calculators', live: true, desc: 'Drag three sliders and see what a month of AI actually costs you.',
+        how: 'Set the sliders to match a normal day: how many messages you send, how long they are, and how long the answers are. Pick a model tier and read the monthly estimate. It is a guide for planning, not an exact bill.' },
+      { id: 'tokens', name: 'Token estimator', cat: 'Calculators', desc: 'Paste text and get a rough token count so you can predict cost.',
+        inputLabel: 'Paste the text you want to measure', placeholder: 'Paste a prompt, a document, or a chat...', runLabel: 'Estimate tokens',
+        how: 'Paste any text and the tool gives a rough token count. Use it to check whether a long document will fit in a model, or to predict the cost of a big job before you run it.' },
+      { id: 'context', name: 'Context window planner', cat: 'Calculators', desc: 'Check whether your document fits in a model before you send it.',
+        inputLabel: 'Paste or describe what you want to send', placeholder: 'Paste the document, notes, or files list...', runLabel: 'Check the fit',
+        how: 'Tell the tool how big your input is and which model you are using. It tells you if it fits in the context window, and what to cut if it does not.' },
+      { id: 'subs', name: 'Subscription vs API', cat: 'Calculators', desc: 'See whether a monthly plan or pay-as-you-go is cheaper for you.',
+        inputLabel: 'Describe how you use AI in a normal week', placeholder: 'e.g. a few hours a day, lots of long documents...', runLabel: 'Compare',
+        how: 'Describe your usage and the tool compares a flat monthly plan against pay-as-you-go pricing, so you can pick the cheaper one.' },
+      { id: 'tighten', name: 'Prompt tightener', cat: 'Writing', desc: 'Paste a messy prompt and get a shorter one that keeps the intent.',
+        inputLabel: 'Paste your messy prompt', placeholder: 'Paste a long or rambly prompt...', runLabel: 'Tighten it',
+        how: 'Paste a long or rambly prompt. The tool trims it down to the essential instructions while keeping what you actually asked for, so it is faster to reuse.' },
+      { id: 'tone', name: 'Tone rewriter', cat: 'Writing', desc: 'Rewrite any text in your voice: short, plain, and warm.',
+        inputLabel: 'Paste the text to rewrite', placeholder: 'Paste an email, post, or paragraph...', runLabel: 'Rewrite',
+        how: 'Paste any text and the tool rewrites it in a short, plain, warm voice with no buzzwords and no em dashes. Good for emails and posts.' },
+      { id: 'headline', name: 'Headline helper', cat: 'Writing', desc: 'Turn one idea into ten plain, honest headlines.',
+        inputLabel: 'What is the post or video about?', placeholder: 'Describe the topic in a sentence...', runLabel: 'Get headlines',
+        how: 'Describe your topic and the tool gives ten plain, honest headline options. No clickbait, no hype. Pick one and tweak it.' },
+      { id: 'model', name: 'Which model should I use?', cat: 'Deciding', desc: 'Answer two questions about speed and budget, get one clear pick.',
+        inputLabel: 'What are you trying to do?', placeholder: 'e.g. write long articles on a small budget...', runLabel: 'Recommend a model',
+        how: 'Tell the tool what you are doing and how much you care about speed versus cost. It points you at one model and explains why in plain words.' },
+      { id: 'buildbuy', name: 'Build it or buy it?', cat: 'Deciding', desc: 'A quick check on whether to build with AI or pay for a tool.',
+        inputLabel: 'What do you need this thing to do?', placeholder: 'Describe the job you want done...', runLabel: 'Help me decide',
+        how: 'Describe what you need. The tool weighs building it yourself with AI against paying for an existing product, and gives you a clear lean with the reasons.' },
+      { id: 'automate', name: 'Should I automate this?', cat: 'Deciding', desc: 'Find out if a task is worth automating, or just worth doing.',
+        inputLabel: 'Describe the task you keep repeating', placeholder: 'e.g. sorting receipts every week...', runLabel: 'Check it',
+        how: 'Describe a repeating task. The tool estimates how much time automating it would save against how long it would take to set up, so you do not over-engineer a five-minute job.' },
+    ];
+
+    this.videoCats = ['Building with AI', 'For beginners', 'Prompting', 'Behind the build'];
+    this.videos = [
+      { title: 'I built 20 apps in 30 days', meta: '14 min', cat: 'Building with AI', desc: 'What happened, what broke, and what I would skip next time.', url: 'https://youtube.com' },
+      { title: 'Build a website with AI, start to finish', meta: '19 min', cat: 'Building with AI', desc: 'A full build, from empty folder to live page.', url: 'https://youtube.com' },
+      { title: 'Ship a small app in a weekend', meta: '22 min', cat: 'Building with AI', desc: 'Pick a tiny idea and get it working in two days.', url: 'https://youtube.com' },
+      { title: 'From idea to live site in one sitting', meta: '16 min', cat: 'Building with AI', desc: 'No planning week. Just open the laptop and ship.', url: 'https://youtube.com' },
+      { title: 'Connect AI to a real database', meta: '14 min', cat: 'Building with AI', desc: 'Store and read real data without a backend team.', url: 'https://youtube.com' },
+      { title: 'Make it look good without a designer', meta: '12 min', cat: 'Building with AI', desc: 'Simple rules that make a rough build look finished.', url: 'https://youtube.com' },
+      { title: 'Add a feature without breaking things', meta: '12 min', cat: 'Building with AI', desc: 'How I change working code and stay calm.', url: 'https://youtube.com' },
+      { title: 'AI for people who are not techies', meta: '8 min', cat: 'For beginners', desc: 'No code, no jargon. Just what it is good for.', url: 'https://youtube.com' },
+      { title: 'Your first hour with an AI assistant', meta: '10 min', cat: 'For beginners', desc: 'Set it up and do something useful right away.', url: 'https://youtube.com' },
+      { title: 'The five prompts I use every day', meta: '9 min', cat: 'For beginners', desc: 'The short, boring prompts that do most of the work.', url: 'https://youtube.com' },
+      { title: 'Stop overthinking your prompts', meta: '6 min', cat: 'For beginners', desc: 'Say what you want, what to keep, what to drop.', url: 'https://youtube.com' },
+      { title: 'What can AI actually do for you?', meta: '7 min', cat: 'For beginners', desc: 'A plain tour of the jobs it is genuinely good at.', url: 'https://youtube.com' },
+      { title: 'Pick the right AI tool', meta: '9 min', cat: 'For beginners', desc: 'How to choose without trying all of them.', url: 'https://youtube.com' },
+      { title: 'Common beginner mistakes', meta: '8 min', cat: 'For beginners', desc: 'The small habits that lead to bad answers.', url: 'https://youtube.com' },
+      { title: 'How to talk to AI like a person', meta: '6 min', cat: 'For beginners', desc: 'Plain language beats clever tricks, every time.', url: 'https://youtube.com' },
+      { title: 'A simple daily AI habit', meta: '5 min', cat: 'For beginners', desc: 'One small routine that compounds fast.', url: 'https://youtube.com' },
+      { title: 'Write prompts that actually work', meta: '12 min', cat: 'Prompting', desc: 'A simple shape for prompts that get good answers.', url: 'https://youtube.com' },
+      { title: 'Make AI sound like you', meta: '11 min', cat: 'Prompting', desc: 'Teach the model your voice in a few lines.', url: 'https://youtube.com' },
+      { title: 'Give the model a job, not a wish', meta: '7 min', cat: 'Prompting', desc: 'Why clear roles beat vague requests.', url: 'https://youtube.com' },
+      { title: 'Templates I reuse every week', meta: '10 min', cat: 'Prompting', desc: 'The handful of prompts I never rewrite.', url: 'https://youtube.com' },
+      { title: 'Fix a prompt that gives bad answers', meta: '8 min', cat: 'Prompting', desc: 'A quick way to debug a prompt that is not working.', url: 'https://youtube.com' },
+      { title: 'Prompts for editing and proofreading', meta: '7 min', cat: 'Prompting', desc: 'Catch mistakes without losing your voice.', url: 'https://youtube.com' },
+      { title: 'How I debug code I cannot read', meta: '11 min', cat: 'Behind the build', desc: 'A loop anyone can follow, no computer science needed.', url: 'https://youtube.com' },
+      { title: 'I am not a developer. I ship anyway.', meta: '7 min', cat: 'Behind the build', desc: 'Why the old gatekeeping does not hold up.', url: 'https://youtube.com' },
+      { title: 'A week of building in public', meta: '15 min', cat: 'Behind the build', desc: 'Five days, one project, shown in full.', url: 'https://youtube.com' },
+      { title: 'My exact daily setup', meta: '9 min', cat: 'Behind the build', desc: 'The tools and tabs I actually keep open.', url: 'https://youtube.com' },
+      { title: 'What I got wrong this month', meta: '11 min', cat: 'Behind the build', desc: 'The mistakes, said out loud, so you can skip them.', url: 'https://youtube.com' },
+    ];
+
+    this.navDefs = [
+      { key: 'home', label: 'Home' }, { key: 'routines', label: 'Routines' },
+      { key: 'tools', label: 'Tools' }, { key: 'channel', label: 'Channel' }, { key: 'about', label: 'About' },
+    ];
+  }
+
+  componentDidMount() {
+    const st = { drag: null, suppress: false };
+    this._onDown = (e) => {
+      if (e.pointerType === 'touch') return;
+      const sc = e.target && e.target.closest ? e.target.closest('[data-scroller]') : null;
+      if (!sc) return;
+      st.drag = { sc, x: e.clientX, left: sc.scrollLeft, moved: false };
+    };
+    this._onMove = (e) => {
+      if (!st.drag) return;
+      const dx = e.clientX - st.drag.x;
+      if (Math.abs(dx) > 4) { st.drag.moved = true; document.body.style.userSelect = 'none'; st.drag.sc.style.cursor = 'grabbing'; }
+      st.drag.sc.scrollLeft = st.drag.left - dx;
+    };
+    this._onUp = () => {
+      if (st.drag) { if (st.drag.moved) st.suppress = true; st.drag.sc.style.cursor = 'grab'; }
+      st.drag = null; document.body.style.userSelect = '';
+    };
+    this._onClick = (e) => { if (st.suppress) { e.preventDefault(); e.stopPropagation(); st.suppress = false; } };
+    document.addEventListener('pointerdown', this._onDown, true);
+    document.addEventListener('pointermove', this._onMove, true);
+    document.addEventListener('pointerup', this._onUp, true);
+    document.addEventListener('click', this._onClick, true);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('pointerdown', this._onDown, true);
+    document.removeEventListener('pointermove', this._onMove, true);
+    document.removeEventListener('pointerup', this._onUp, true);
+    document.removeEventListener('click', this._onClick, true);
+  }
+
+  go(page) { this.setState({ page }); try { window.scrollTo(0, 0); } catch (e) {} }
+  openPrompt(id) { this.setState({ page: 'prompt', selPromptId: id, copiedId: null }); try { window.scrollTo(0, 0); } catch (e) {} }
+  openTool(id) { this.setState({ page: 'tool', selToolId: id, toolInput: '', toolRan: false }); try { window.scrollTo(0, 0); } catch (e) {} }
+
+  scrollRow(e, dir) {
+    const sec = e.currentTarget && e.currentTarget.closest('section');
+    const sc = sec && sec.querySelector('[data-scroller]');
+    if (!sc) return;
+    const card = sc.firstElementChild;
+    const step = card ? (card.getBoundingClientRect().width + 18) : Math.min(sc.clientWidth * 0.85, 600);
+    sc.scrollLeft = sc.scrollLeft + dir * step;
+  }
+
+  copyPrompt(text, id, e) {
+    if (e && e.stopPropagation) e.stopPropagation();
+    let done = false;
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).catch(() => this.fallbackCopy(text)); done = true;
+      }
+    } catch (err) {}
+    if (!done) this.fallbackCopy(text);
+    this.setState({ copiedId: id });
+    setTimeout(() => this.setState(s => s.copiedId === id ? { copiedId: null } : null), 1600);
+  }
+  fallbackCopy(text) {
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.focus(); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    } catch (err) {}
+  }
+
+  fmt(n) { if (n >= 100) return '$' + n.toFixed(0); if (n >= 10) return '$' + n.toFixed(1); return '$' + n.toFixed(2); }
+  chipStyle(active) {
+    return "border:1px solid #15130F; background:" + (active ? '#15130F' : 'none') + "; color:" + (active ? '#FAF7F2' : '#15130F') + "; padding:8px 15px; font-family:'General Sans',sans-serif; font-size:14px; cursor:pointer; border-radius:2px; white-space:nowrap; transition:border-color 150ms ease;";
+  }
+  findRoutine(id) {
+    for (const f of this.routineFolders) {
+      for (let i = 0; i < f.items.length; i++) { if (f.id + '-' + i === id) return { folder: f, item: f.items[i] }; }
+    }
+    return null;
+  }
+
+  renderVals() {
+    const s = this.state;
+    const nav = this.navDefs.map(n => ({
+      label: n.label, onClick: () => this.go(n.key),
+      activeCss: s.page === n.key ? 'color:#F2541B; font-weight:500; border-bottom-color:#F2541B;' : '',
+    }));
+
+    // ---- Routines ----
+    const rq = s.routineQuery.trim().toLowerCase();
+    const matchR = (it) => !rq || (it.title + ' ' + it.desc + ' ' + it.prompt).toLowerCase().indexOf(rq) !== -1;
+    const decorate = (fid, fchip, it, i) => ({
+      title: it.title, desc: it.desc, num: String(i + 1).padStart(2, '0'),
+      folderChip: fchip, onOpen: () => this.openPrompt(fid + '-' + i),
+    });
+    const routineFolders = this.routineFolders
+      .filter(f => s.routineFilter === 'all' || f.id === s.routineFilter)
+      .map(f => {
+        const items = f.items.map((it, i) => ({ it, i })).filter(x => matchR(x.it)).map(x => decorate(f.id, f.chip, x.it, x.i));
+        return { id: f.id, name: f.name, blurb: f.blurb, items, count: items.length + (items.length === 1 ? ' prompt' : ' prompts') };
+      })
+      .filter(f => f.items.length > 0);
+    const routinesEmpty = routineFolders.length === 0;
+    const routineChips = [{ label: 'All', v: 'all' }].concat(this.routineFolders.map(f => ({ label: f.chip, v: f.id })))
+      .map(c => ({ label: c.label, onClick: () => this.setState({ routineFilter: c.v }), style: this.chipStyle(s.routineFilter === c.v) }));
+    const topRoutines = [['beginners', 0], ['writing', 0], ['building', 0]].map(([fid, idx]) => {
+      const f = this.routineFolders.find(x => x.id === fid); return decorate(fid, f.chip, f.items[idx], idx);
+    });
+
+    // selected prompt
+    let selPrompt = { folderName: '', title: '', when: '', prompt: '', fills: [], noFills: true, copyLabel: 'Copy prompt', onCopy: () => {} };
+    if (s.page === 'prompt' && s.selPromptId) {
+      const found = this.findRoutine(s.selPromptId);
+      if (found) {
+        const matches = found.item.prompt.match(/\[[^\]]+\]/g) || [];
+        const fills = matches.filter((v, i, a) => a.indexOf(v) === i);
+        selPrompt = {
+          folderName: found.folder.name, title: found.item.title, when: found.item.when,
+          prompt: found.item.prompt, fills, noFills: fills.length === 0,
+          copyLabel: s.copiedId === s.selPromptId ? 'Copied to clipboard' : 'Copy prompt',
+          onCopy: (e) => this.copyPrompt(found.item.prompt, s.selPromptId, e),
+        };
+      }
+    }
+
+    // ---- Tools ----
+    const tq = s.toolQuery.trim().toLowerCase();
+    const matchT = (t) => !tq || (t.name + ' ' + t.desc + ' ' + t.cat).toLowerCase().indexOf(tq) !== -1;
+    const toCard = (t) => ({ id: t.id, name: t.name, desc: t.desc, tag: t.cat, isLive: !!t.live, cta: t.live ? 'Open the calculator \u2192' : 'Open the tool \u2192', onOpen: () => this.openTool(t.id) });
+    const toolCats = this.tools.map(t => t.cat).filter((c, i, a) => a.indexOf(c) === i);
+    const toolFolders = toolCats
+      .filter(c => s.toolFilter === 'all' || s.toolFilter === c)
+      .map(c => {
+        const items = this.tools.filter(t => t.cat === c).filter(matchT).map(toCard);
+        return { name: c, items, count: items.length + (items.length === 1 ? ' tool' : ' tools'), scrollPrev: (e) => this.scrollRow(e, -1), scrollNext: (e) => this.scrollRow(e, 1) };
+      })
+      .filter(c => c.items.length > 0);
+    const toolsEmpty = toolFolders.length === 0;
+    const toolChips = [{ label: 'All', v: 'all' }].concat(toolCats.map(c => ({ label: c, v: c })))
+      .map(c => ({ label: c.label, onClick: () => this.setState({ toolFilter: c.v }), style: this.chipStyle(s.toolFilter === c.v) }));
+
+    const homeToolDefs = [this.tools.find(t => t.id === 'cost'), this.tools.find(t => t.id === 'tighten'), this.tools.find(t => t.id === 'model')];
+    const homeTools = homeToolDefs.map(t => ({
+      name: t.name, desc: t.desc, tag: t.cat, isLive: !!t.live,
+      cta: t.live ? 'Try it \u2192' : 'Open \u2192', onOpen: () => this.openTool(t.id),
+      cardStyle: "text-align:left; border:1px solid #15130F; padding:clamp(20px,2vw,26px); display:flex; flex-direction:column; cursor:pointer; font-family:'General Sans',sans-serif; transition:background 150ms ease; background:" + (t.live ? '#15130F' : 'none') + ";",
+      cardHover: t.live ? 'background:#211d18;' : 'background:#f1eadd;',
+      tagColor: t.live ? '#F2541B' : '#a39a89',
+      titleColor: t.live ? '#FAF7F2' : '#15130F',
+      descColor: t.live ? '#b9b2a4' : '#46423a',
+    }));
+
+    // selected tool
+    let selTool = { cat: '', name: '', desc: '', how: '', isCost: false, isProto: false, inputLabel: '', placeholder: '', runLabel: 'Run' };
+    if (s.page === 'tool' && s.selToolId) {
+      const t = this.tools.find(x => x.id === s.selToolId);
+      if (t) selTool = {
+        cat: t.cat, name: t.name, desc: t.desc, how: t.how,
+        isCost: !!t.live, isProto: !t.live,
+        inputLabel: t.inputLabel || '', placeholder: t.placeholder || '', runLabel: t.runLabel || 'Run',
+      };
+    }
+    const toolOutput = s.toolRan
+      ? 'Prototype: this is where your result will appear. (You entered ' + s.toolInput.trim().length + ' characters.) The working version is on the way.'
+      : 'Type something on the left and press the button to see how this tool will work.';
+
+    // ---- Videos ----
+    const vq = s.videoQuery.trim().toLowerCase();
+    const matchV = (v) => !vq || (v.title + ' ' + v.desc + ' ' + v.cat).toLowerCase().indexOf(vq) !== -1;
+    const vFeatured = this.videos[0];
+    const videoFolders = this.videoCats
+      .filter(c => s.videoFilter === 'all' || s.videoFilter === c)
+      .map(c => {
+        const items = this.videos.filter(v => v.cat === c && v !== vFeatured).filter(matchV);
+        return { name: c, items, count: items.length + (items.length === 1 ? ' video' : ' videos'), scrollPrev: (e) => this.scrollRow(e, -1), scrollNext: (e) => this.scrollRow(e, 1) };
+      })
+      .filter(c => c.items.length > 0);
+    const videosEmpty = videoFolders.length === 0;
+    const videoChips = [{ label: 'All', v: 'all' }].concat(this.videoCats.map(c => ({ label: c, v: c })))
+      .map(c => ({ label: c.label, onClick: () => this.setState({ videoFilter: c.v }), style: this.chipStyle(s.videoFilter === c.v) }));
+
+    // ---- Calculator ----
+    const t = this.tiers[s.tier];
+    const tin = s.win * 1.3, tout = s.wout * 1.3;
+    const daily = s.per * (tin / 1e6 * t.in + tout / 1e6 * t.out);
+    const monthly = daily * 30;
+    const segBase = "flex:1; border:none; padding:13px 0; font-family:'General Sans',sans-serif; font-size:15px; font-weight:500; cursor:pointer; border-right:1px solid #15130F;";
+    const seg = (k, last) => segBase + (s.tier === k ? 'background:#F2541B; color:#FAF7F2;' : 'background:#FAF7F2; color:#15130F;') + (last ? 'border-right:none;' : '');
+
+    return {
+      isHome: s.page === 'home', isRoutines: s.page === 'routines', isPrompt: s.page === 'prompt',
+      isTools: s.page === 'tools', isTool: s.page === 'tool', isChannel: s.page === 'channel', isAbout: s.page === 'about',
+      nav,
+      goHome: () => this.go('home'), goRoutines: () => this.go('routines'), goTools: () => this.go('tools'),
+      goChannel: () => this.go('channel'), goAbout: () => this.go('about'),
+      scrollPrev: (e) => this.scrollRow(e, -1), scrollNext: (e) => this.scrollRow(e, 1),
+      topRoutines, routineFolders, routinesEmpty, routineChips,
+      routineQuery: s.routineQuery, setRoutineQuery: (e) => this.setState({ routineQuery: e.target.value }),
+      selPrompt,
+      toolFolders, toolsEmpty, toolChips, homeTools,
+      toolQuery: s.toolQuery, setToolQuery: (e) => this.setState({ toolQuery: e.target.value }),
+      selTool, toolInput: s.toolInput, setToolInput: (e) => this.setState({ toolInput: e.target.value }),
+      runTool: () => this.setState({ toolRan: true }), toolOutput,
+      vFeatured, videoFolders, videosEmpty, videoChips,
+      videoQuery: s.videoQuery, setVideoQuery: (e) => this.setState({ videoQuery: e.target.value }),
+      homeVideos: this.videos.slice(0, 4),
+      calcPer: s.per, calcWin: s.win, calcWout: s.wout, calcMonthly: this.fmt(monthly), calcDaily: this.fmt(daily),
+      calcNote: 'Based on ' + t.label + ', 30 days a month. A rough guide, not a bill.',
+      setPer: (e) => this.setState({ per: +e.target.value }), setWin: (e) => this.setState({ win: +e.target.value }), setWout: (e) => this.setState({ wout: +e.target.value }),
+      setTierFast: () => this.setState({ tier: 'fast' }), setTierBalanced: () => this.setState({ tier: 'balanced' }), setTierTop: () => this.setState({ tier: 'top' }),
+      tierStyleFast: seg('fast', false), tierStyleBalanced: seg('balanced', false), tierStyleTop: seg('top', true),
+    };
+  }
+}
+</script>
+</body>
+</html>
