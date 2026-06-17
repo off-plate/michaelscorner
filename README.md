@@ -4,8 +4,10 @@ The public personal-brand resource hub for Michael Florian (@michaelflorian_ai).
 
 A generous resource hub, not a sales funnel: prompt routines you can copy, small tools and calculators, links out to the YouTube channel, and an about page. Brand and strategy live in `../brand/`.
 
-Live (GitHub Pages): https://off-plate.github.io/michaelscorner/
+Live: https://michaels-corner.netlify.app (primary) and https://off-plate.github.io/michaelscorner/ (GitHub Pages mirror)
 Intended domain: michaelscorner.com
+
+Note: the Netlify site `michaels-corner` is deployed manually (zip), with the published deploy locked and builds stopped. It used to host a separate video-production tool, now retired.
 
 ## What this is
 
