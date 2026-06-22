@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>404 — Michaels Corner</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=clash-display@600,700&f[]=general-sans@400,500&display=swap">
+<style>
+  :root {
+    --cream: #FAF7F2;
+    --ink: #15130F;
+    --muted: #5b564d;
+    --accent: #F2541B;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  ::selection { background: var(--accent); color: var(--cream); }
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'General Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 48px 20px 64px;
+    gap: clamp(20px, 4vh, 44px);
+  }
+  #render {
+    display: block;
+    width: min(86vw, 460px);
+    height: min(86vw, 460px);
+    /* keep crisp, no smoothing on the dot field */
+    image-rendering: pixelated;
+  }
+  .num {
+    font-family: 'Clash Display', sans-serif;
+    font-weight: 700;
+    font-size: clamp(68px, 13vw, 128px);
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    margin: 0;
+  }
+  .copy {
+    margin: 0;
+    font-size: clamp(17px, 2.4vw, 22px);
+    line-height: 1.5;
+    color: var(--muted);
+    max-width: 32ch;
+  }
+  .home {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--ink);
+    color: var(--cream);
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 14px 26px;
+    transition: background 150ms ease, color 150ms ease;
+  }
+  .home:hover { background: var(--accent); color: var(--cream); }
+  .home .arr { transition: transform 150ms ease; }
+  .home:hover .arr { transform: translateX(3px); }
+  .stack { display: flex; flex-direction: column; align-items: center; gap: clamp(14px, 3vh, 26px); }
+</style>
+</head>
+<body>
+  <canvas id="render" width="460" height="460" aria-hidden="true"></canvas>
+  <div class="stack">
+    <h1 class="num">404</h1>
+    <p class="copy">My whole site is five pages. How the f*ck did you end up here?</p>
+    <a class="home" href="/">Back to homepage <span class="arr">&#8594;</span></a>
+  </div>
+
+<script>
+(function () {
+  var canvas = document.getElementById('render');
+  var ctx = canvas.getContext('2d');
+
+  // ---- dot-matrix 3D torus (the classic terminal "donut", rendered as halftone dots) ----
+  var COLS = 84, ROWS = 84;
+  var zbuf = new Float32Array(COLS * ROWS);
+  var lum  = new Float32Array(COLS * ROWS);
+  var R1 = 1, R2 = 2, K2 = 5;          // tube radius, ring radius, viewer distance
+  var K1 = COLS * K2 * 3 / (8 * (R1 + R2));
+  var A = 0.2, B = 0.0;                  // tumble angles
+  var size = 460, dpr = 1;
+
+  function resize() {
+    var css = Math.min(window.innerWidth * 0.86, 460);
+    size = css;
+    dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(css * dpr);
+    canvas.height = Math.round(css * dpr);
+    canvas.style.width = css + 'px';
+    canvas.style.height = css + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function compute() {
+    zbuf.fill(-Infinity);
+    lum.fill(0);
+    var cosA = Math.cos(A), sinA = Math.sin(A), cosB = Math.cos(B), sinB = Math.sin(B);
+    for (var theta = 0; theta < 6.2832; theta += 0.07) {
+      var ct = Math.cos(theta), st = Math.sin(theta);
+      for (var phi = 0; phi < 6.2832; phi += 0.02) {
+        var cp = Math.cos(phi), sp = Math.sin(phi);
+        var cx = R2 + R1 * ct, cy = R1 * st;
+        var x = cx * (cosB * cp + sinA * sinB * sp) - cy * cosA * sinB;
+        var y = cx * (sinB * cp - sinA * cosB * sp) + cy * cosA * cosB;
+        var z = K2 + cosA * cx * sp + cy * sinA;
+        var ooz = 1 / z;
+        var xp = (COLS / 2 + K1 * ooz * x) | 0;
+        var yp = (ROWS / 2 - K1 * ooz * y) | 0;
+        if (xp < 0 || xp >= COLS || yp < 0 || yp >= ROWS) continue;
+        var L = cp * ct * sinB - cosA * ct * sp - sinA * st + cosB * (cosA * st - ct * sinA * sp);
+        if (L > 0) {
+          var idx = xp + yp * COLS;
+          if (ooz > zbuf[idx]) { zbuf[idx] = ooz; lum[idx] = L; }
+        }
+      }
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, size, size);
+    var spacing = size / COLS;
+    ctx.fillStyle = '#15130F';
+    for (var j = 0; j < ROWS; j++) {
+      for (var i = 0; i < COLS; i++) {
+        var L = lum[i + j * COLS];
+        if (L <= 0) continue;
+        var Ln = L / 1.4; if (Ln > 1) Ln = 1;
+        var r = spacing * (0.16 + Ln * 0.42);   // brighter surface = bigger dot
+        ctx.beginPath();
+        ctx.arc((i + 0.5) * spacing, (j + 0.5) * spacing, r, 0, 6.2832);
+        ctx.fill();
+      }
+    }
+  }
+
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function loop() {
+    compute();
+    draw();
+    A += 0.028;
+    B += 0.015;
+    requestAnimationFrame(loop);
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+  if (reduce) { compute(); draw(); }   // hold a single frame for reduced-motion
+  else loop();
+})();
+</script>
+</body>
+</html>
