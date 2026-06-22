@@ -68,6 +68,18 @@
   .home .arr { transition: transform 150ms ease; }
   .home:hover .arr { transform: translateX(3px); }
   .stack { display: flex; flex-direction: column; align-items: center; gap: clamp(14px, 3vh, 26px); }
+  .wm {
+    position: fixed;
+    left: 0; right: 0;
+    bottom: clamp(18px, 4vh, 34px);
+    text-align: center;
+    font-family: 'Clash Display', sans-serif;
+    font-weight: 700;
+    font-size: clamp(15px, 1.8vw, 19px);
+    letter-spacing: -0.01em;
+    color: var(--accent);
+    pointer-events: none;
+  }
 </style>
 </head>
 <body>
@@ -77,6 +89,8 @@
     <p class="copy">My whole site is five pages. How the f*ck did you end up here?</p>
     <a class="home" href="/">Back to homepage <span class="arr">&#8594;</span></a>
   </div>
+
+  <footer class="wm">Michaels Corner</footer>
 
 <script>
 (function () {

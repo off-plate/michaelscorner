@@ -11,11 +11,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Assemble publish dir (site files only)
+        run: |
+          mkdir -p _site
+          cp index.html support.js 404.html .nojekyll _site/
+
       - name: Deploy site to Netlify
         run: |
           npx --yes netlify-cli@17 deploy \
             --prod \
-            --dir=. \
+            --dir=_site \
             --site="$NETLIFY_SITE_ID" \
             --auth="$NETLIFY_AUTH_TOKEN" \
             --message "GitHub Actions: ${GITHUB_SHA::7}"
