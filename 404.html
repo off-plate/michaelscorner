@@ -97,14 +97,44 @@
   var canvas = document.getElementById('render');
   var ctx = canvas.getContext('2d');
 
-  // ---- dot-matrix 3D torus (the classic terminal "donut", rendered as halftone dots) ----
-  var COLS = 84, ROWS = 84;
+  // ---- rotating dot-matrix planet: a lit 3D globe with drifting continents ----
+  var COLS = 88, ROWS = 88;
   var zbuf = new Float32Array(COLS * ROWS);
-  var lum  = new Float32Array(COLS * ROWS);
-  var R1 = 1, R2 = 2, K2 = 5;          // tube radius, ring radius, viewer distance
-  var K1 = COLS * K2 * 3 / (8 * (R1 + R2));
-  var A = 0.2, B = 0.0;                  // tumble angles
+  var bri  = new Float32Array(COLS * ROWS);   // 0..1 brightness per cell
+  var K2 = 5;                                  // viewer distance
+  var K1 = COLS * 1.9;                         // projection scale (globe fills the frame)
+  var tilt = 0.42;                             // fixed axial tilt
+  var spin = 0;                                // animated longitude
   var size = 460, dpr = 1;
+
+  // light fixed in view space (upper-left, in front of the globe)
+  var Lx = -0.45, Ly = 0.55, Lz = -0.70;
+  var Lm = Math.sqrt(Lx * Lx + Ly * Ly + Lz * Lz); Lx /= Lm; Ly /= Lm; Lz /= Lm;
+
+  // seamless pseudo-noise on the unit sphere -> land vs ocean
+  function isLand(x, y, z) {
+    var n = Math.sin(x * 2.3 + 1.0)
+          + Math.cos(y * 3.1 - 0.5)
+          + Math.sin(z * 2.7 + 2.0)
+          + 0.6 * Math.sin(x * 5.1 + y * 3.0 - 1.2)
+          + 0.6 * Math.cos(z * 4.3 - x * 2.0)
+          + 0.5 * Math.sin((x + y + z) * 3.7 + 0.3);
+    return n > 0.85 ? 1 : 0;
+  }
+
+  // precompute the surface grid once (continents only rotate, they never change shape)
+  var bxA = [], byA = [], bzA = [], landA = [];
+  (function buildGlobe() {
+    for (var v = 0.0; v < 3.1416; v += 0.02) {
+      var sv = Math.sin(v), cv = Math.cos(v);
+      for (var u = 0.0; u < 6.2832; u += 0.02) {
+        var bx = sv * Math.cos(u), by = cv, bz = sv * Math.sin(u);
+        bxA.push(bx); byA.push(by); bzA.push(bz);
+        landA.push(isLand(bx, by, bz));
+      }
+    }
+  })();
+  var N = bxA.length;
 
   function resize() {
     var css = Math.min(window.innerWidth * 0.86, 460);
@@ -119,26 +149,27 @@
 
   function compute() {
     zbuf.fill(-Infinity);
-    lum.fill(0);
-    var cosA = Math.cos(A), sinA = Math.sin(A), cosB = Math.cos(B), sinB = Math.sin(B);
-    for (var theta = 0; theta < 6.2832; theta += 0.07) {
-      var ct = Math.cos(theta), st = Math.sin(theta);
-      for (var phi = 0; phi < 6.2832; phi += 0.02) {
-        var cp = Math.cos(phi), sp = Math.sin(phi);
-        var cx = R2 + R1 * ct, cy = R1 * st;
-        var x = cx * (cosB * cp + sinA * sinB * sp) - cy * cosA * sinB;
-        var y = cx * (sinB * cp - sinA * cosB * sp) + cy * cosA * cosB;
-        var z = K2 + cosA * cx * sp + cy * sinA;
-        var ooz = 1 / z;
-        var xp = (COLS / 2 + K1 * ooz * x) | 0;
-        var yp = (ROWS / 2 - K1 * ooz * y) | 0;
-        if (xp < 0 || xp >= COLS || yp < 0 || yp >= ROWS) continue;
-        var L = cp * ct * sinB - cosA * ct * sp - sinA * st + cosB * (cosA * st - ct * sinA * sp);
-        if (L > 0) {
-          var idx = xp + yp * COLS;
-          if (ooz > zbuf[idx]) { zbuf[idx] = ooz; lum[idx] = L; }
-        }
-      }
+    bri.fill(0);
+    var cosS = Math.cos(spin), sinS = Math.sin(spin);
+    var cosT = Math.cos(tilt), sinT = Math.sin(tilt);
+    for (var k = 0; k < N; k++) {
+      var bx = bxA[k], by = byA[k], bz = bzA[k];
+      // spin around Y, then tilt around X
+      var x2 = bx * cosS + bz * sinS;
+      var z1 = bz * cosS - bx * sinS;
+      var y2 = by * cosT - z1 * sinT;
+      var z2 = by * sinT + z1 * cosT;
+      // lambert shading (normal == surface point on a unit sphere) + soft ambient
+      var lam = x2 * Lx + y2 * Ly + z2 * Lz;
+      if (lam < 0) lam = 0;
+      var shade = 0.20 + 0.80 * lam;
+      var b = landA[k] ? shade : shade * 0.45;   // land reads denser than ocean
+      var z = z2 + K2, ooz = 1 / z;
+      var xp = (COLS / 2 + K1 * ooz * x2) | 0;
+      var yp = (ROWS / 2 - K1 * ooz * y2) | 0;
+      if (xp < 0 || xp >= COLS || yp < 0 || yp >= ROWS) continue;
+      var idx = xp + yp * COLS;
+      if (ooz > zbuf[idx]) { zbuf[idx] = ooz; bri[idx] = b; }   // nearest hemisphere wins
     }
   }
 
@@ -148,10 +179,10 @@
     ctx.fillStyle = '#15130F';
     for (var j = 0; j < ROWS; j++) {
       for (var i = 0; i < COLS; i++) {
-        var L = lum[i + j * COLS];
-        if (L <= 0) continue;
-        var Ln = L / 1.4; if (Ln > 1) Ln = 1;
-        var r = spacing * (0.16 + Ln * 0.42);   // brighter surface = bigger dot
+        var b = bri[i + j * COLS];
+        if (b <= 0.03) continue;
+        if (b > 1) b = 1;
+        var r = spacing * (0.12 + b * 0.46);   // brighter / land = bigger dot
         ctx.beginPath();
         ctx.arc((i + 0.5) * spacing, (j + 0.5) * spacing, r, 0, 6.2832);
         ctx.fill();
@@ -164,8 +195,7 @@
   function loop() {
     compute();
     draw();
-    A += 0.028;
-    B += 0.015;
+    spin += 0.011;                              // slow, majestic globe spin
     requestAnimationFrame(loop);
   }
 
