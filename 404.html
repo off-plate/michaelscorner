@@ -14,7 +14,8 @@
     --accent: #F2541B;
   }
   * { box-sizing: border-box; }
-  html, body { margin: 0; }
+  html, body { margin: 0; height: 100%; }
+  html { overflow: hidden; }
   ::selection { background: var(--accent); color: var(--cream); }
   body {
     background: var(--cream);
@@ -22,25 +23,28 @@
     font-family: 'General Sans', sans-serif;
     -webkit-font-smoothing: antialiased;
     min-height: 100vh;
+    min-height: 100dvh;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 48px 20px 64px;
-    gap: clamp(20px, 4vh, 44px);
+    padding: clamp(16px, 3.5vh, 44px) 20px clamp(38px, 6vh, 56px);
+    gap: clamp(12px, 2.6vh, 40px);
   }
   #render {
     display: block;
-    width: min(86vw, 460px);
-    height: min(86vw, 460px);
+    /* fit by width AND height so the page never needs to scroll */
+    width: min(86vw, 52vh, 460px);
+    height: min(86vw, 52vh, 460px);
     /* keep crisp, no smoothing on the dot field */
     image-rendering: pixelated;
   }
   .num {
     font-family: 'Clash Display', sans-serif;
     font-weight: 700;
-    font-size: clamp(68px, 13vw, 128px);
+    font-size: clamp(52px, 12vw, 128px);
     line-height: 0.9;
     letter-spacing: -0.03em;
     margin: 0;
@@ -79,6 +83,14 @@
     letter-spacing: -0.01em;
     color: var(--accent);
     pointer-events: none;
+  }
+  /* short landscape (phones on their side): go side-by-side so it still fits one screen */
+  @media (max-height: 560px) and (orientation: landscape) {
+    body { flex-direction: row; gap: clamp(18px, 4vw, 48px); padding: 14px 24px; }
+    #render { width: min(46vw, 80vh, 340px); height: min(46vw, 80vh, 340px); }
+    .stack { align-items: flex-start; text-align: left; }
+    .copy { text-align: left; }
+    .wm { left: auto; right: clamp(16px, 4vw, 32px); bottom: 12px; text-align: right; }
   }
 </style>
 </head>
@@ -137,7 +149,7 @@
   var N = bxA.length;
 
   function resize() {
-    var css = Math.min(window.innerWidth * 0.86, 460);
+    var css = Math.min(window.innerWidth * 0.86, window.innerHeight * 0.52, 460);
     size = css;
     dpr = window.devicePixelRatio || 1;
     canvas.width = Math.round(css * dpr);
