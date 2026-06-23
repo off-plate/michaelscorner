@@ -96,7 +96,7 @@
 
         <!-- TOP ROUTINES -->
         <section style="border-top:1px solid #15130F; position:relative;">
-          <canvas class="mc-dog" style="position:absolute; top:-50px; left:0; pointer-events:none; z-index:6; opacity:0; transition:opacity 200ms ease; will-change:transform;"></canvas>
+          <canvas class="mc-dog" style="position:absolute; top:-58px; left:0; pointer-events:none; z-index:6; opacity:0; transition:opacity 200ms ease; will-change:transform;"></canvas>
           <div style="max-width:1440px; margin:0 auto; padding:clamp(34px,3.5vw,54px) clamp(20px,4vw,56px);">
             <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:18px; flex-wrap:wrap; margin-bottom:clamp(20px,2.5vw,30px);">
               <div>
@@ -977,33 +977,49 @@ class Component extends DCLogic {
   })();
 
   /* ---- a small dot-pixel dog that walks across the divider under the hero, now and then ---- */
-  function dogCell(cx, cy, phase){
-    var on = false;
-    if (Math.pow((cx-8)/6.2,2) + Math.pow((cy-7)/2.9,2) <= 1) on = true;            /* body */
-    if (Math.pow(cx-16,2) + Math.pow((cy-5)/1.05,2) <= 10) on = true;               /* head */
-    if ((cy===6||cy===7) && (cx>=19&&cx<=20)) on = true;                            /* snout */
-    if ((cx===13||cx===14) && (cy>=6&&cy<=9)) on = true;                            /* ear */
-    if ((cx===2&&(cy===5||cy===6)) || (cx===1&&(cy===3||cy===4))) on = true;        /* tail */
-    var aPlanted = (phase % 1) < 0.5;
-    function leg(col, isA){ if (cx!==col) return false; var down = (isA===aPlanted); return cy>=10 && cy<=(down?14:12); }
-    if (leg(4,true)||leg(15,true)||leg(7,false)||leg(12,false)) on = true;          /* 4 legs, animated */
-    if (!on) return null;
-    return (cx===17 && cy===4);                                                     /* eye = orange */
+  var DOGPAL = { 1:'#CB8E4E', 2:'#8A5A2B', 3:'#15130F', 4:'#F2541B', 5:'#FAF7F2' };
+  function dogLeg(cx, cy, ph){
+    if (cy<17 || cy>23) return false;
+    var aPlanted = (ph % 1) < 0.5;
+    function leg(col, isA){ if (cx!==col && cx!==col+1) return false; var down = (isA===aPlanted); return cy>=17 && cy<=(down?22:20); }
+    return leg(6,true)||leg(19,true)||leg(11,false)||leg(24,false);
   }
-  function drawDog(ctx, W, H, phase, dir){
-    var COLS=23, ROWS=16, sp=Math.min(W/COLS, H/ROWS), ox=(W-sp*COLS)/2, oy=(H-sp*ROWS)/2;
+  function dogColor(cx, cy, ph){
+    var inBody = Math.pow((cx-12)/9.2,2) + Math.pow((cy-13)/5.4,2) <= 1;
+    var inHead = Math.pow((cx-24)/6.0,2) + Math.pow((cy-9)/6.0,2) <= 1;
+    var inSnout = (cx>=28&&cx<=31) && (cy>=9&&cy<=13);
+    var inEar1 = (cy>=2&&cy<=8) && Math.abs(cx-21.5) <= (8-cy)*0.55;
+    var inEar2 = (cy>=1&&cy<=7) && Math.abs(cx-26.5) <= (7-cy)*0.55;
+    var wag = Math.round(Math.sin(ph*Math.PI*2)*1.5);
+    var inTail = ((cy>=10&&cy<=13)&&(cx>=2&&cx<=4)) || ((cy>=6&&cy<=10)&&(cx>=1+(wag>0?wag:0)&&cx<=3+wag));
+    var leg = dogLeg(cx,cy,ph);
+    if (!(inBody||inHead||inSnout||inEar1||inEar2||inTail||leg)) return 0;
+    if (cx>=30 && cy>=10 && cy<=11) return 3;                       /* nose */
+    if ((cx===25||cx===26) && cy===8) return cx===25?3:5;          /* eye + highlight */
+    if (cx>=18&&cx<=20 && cy>=11&&cy<=17 && (inBody||leg)) return 4; /* orange collar */
+    if (inEar1||inEar2) return 2;                                   /* ears brown */
+    if (inSnout && cy<=10) return 2;                                /* snout bridge */
+    if (inTail && cx<=2) return 2;                                  /* tail tip */
+    if (inBody && cy>=16) return 2;                                 /* belly shading */
+    return 1;                                                       /* tan */
+  }
+  function drawDog(ctx, W, H, ph, dir){
+    var COLS=33, ROWS=24, ps=Math.min(W/COLS, H/ROWS), ox=(W-ps*COLS)/2, oy=(H-ps*ROWS)/2;
     ctx.clearRect(0,0,W,H); ctx.save();
     if (dir<0){ ctx.translate(W,0); ctx.scale(-1,1); }
-    for (var cy=0;cy<ROWS;cy++) for (var cx=0;cx<COLS;cx++){
-      var c = dogCell(cx,cy,phase); if (c===null) continue;
-      ctx.fillStyle = c ? '#F2541B' : '#15130F';
-      ctx.beginPath(); ctx.arc(ox+(cx+0.5)*sp, oy+(cy+0.5)*sp, sp*0.43, 0, 6.2832); ctx.fill();
+    var g=[], cx, cy;
+    for (cy=0;cy<ROWS;cy++){ g[cy]=[]; for (cx=0;cx<COLS;cx++) g[cy][cx]=dogColor(cx,cy,ph); }
+    function fl(x,y){ return x>=0&&x<COLS&&y>=0&&y<ROWS&&g[y][x]>0; }
+    for (cy=0;cy<ROWS;cy++) for (cx=0;cx<COLS;cx++){
+      var c=g[cy][cx];
+      if (c===0){ if (fl(cx-1,cy)||fl(cx+1,cy)||fl(cx,cy-1)||fl(cx,cy+1)) c=3; else continue; }
+      ctx.fillStyle=DOGPAL[c]; ctx.fillRect(ox+cx*ps, oy+cy*ps, ps+0.6, ps+0.6);
     }
     ctx.restore();
   }
   function setupDog(canvas){
     if (RM) return;
-    var ctx=canvas.getContext('2d'), W=84, H=60, dpr=window.devicePixelRatio||1;
+    var ctx=canvas.getContext('2d'), W=92, H=66, dpr=window.devicePixelRatio||1;
     canvas.width=W*dpr; canvas.height=H*dpr; canvas.style.width=W+'px'; canvas.style.height=H+'px'; ctx.setTransform(dpr,0,0,dpr,0,0);
     var section=canvas.parentElement, x=0, dir=1, dist=0, walking=false, lastT=0;
     function tick(now){
@@ -1011,7 +1027,7 @@ class Component extends DCLogic {
       var dt=lastT?Math.min(50, now-lastT):16; lastT=now;
       if (walking){
         x += dir*0.075*dt; dist += 0.075*dt;
-        drawDog(ctx, W, H, dist/22, dir);
+        drawDog(ctx, W, H, dist/26, dir);
         canvas.style.transform = 'translateX(' + x.toFixed(1) + 'px)';
         var spanW = section.clientWidth;
         if ((dir>0 && x>spanW+12) || (dir<0 && x<-W-12)){ walking=false; canvas.style.opacity='0'; schedule(); }
