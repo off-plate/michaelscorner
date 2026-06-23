@@ -20,7 +20,6 @@
   .mc-fx::before{ top:-5px; left:-5px; border-right:0; border-bottom:0; transform:translate(-3px,-3px); }
   .mc-fx::after{ bottom:-5px; right:-5px; border-left:0; border-top:0; transform:translate(3px,3px); }
   .mc-fx:hover::before, .mc-fx:hover::after, .mc-fx:focus-visible::before, .mc-fx:focus-visible::after{ opacity:1; transform:translate(0,0); }
-  #mc-critter{ position:fixed; left:0; top:0; z-index:35; pointer-events:none; font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:15px; line-height:1; color:#15130F; white-space:pre; opacity:0; will-change:transform; }
 </style>
 <script src="./support.js"></script>
 </head>
@@ -62,9 +61,9 @@
         <button class="mh-word" onClick="{{ goHome }}" style="grid-area:word; justify-self:center; display:inline-flex; align-items:center; gap:clamp(8px,1vw,11px); background:none; border:none; cursor:pointer; font-family:'Clash Display',sans-serif; font-weight:700; font-size:clamp(20px,2.6vw,30px); letter-spacing:-0.01em; color:#15130F; padding:0; white-space:nowrap;"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9Ik1pY2hhZWwncyBDb3JuZXIiPgogIDxnIGZpbGw9IiMxNTEzMEYiPgogICAgPHJlY3QgeD0iNiIgeT0iNiIgd2lkdGg9IjM0IiBoZWlnaHQ9IjEyIiByeD0iMiIvPgogICAgPHJlY3QgeD0iNiIgeT0iNiIgd2lkdGg9IjEyIiBoZWlnaHQ9IjM0IiByeD0iMiIvPgogICAgPHJlY3QgeD0iNjAiIHk9IjgyIiB3aWR0aD0iMzQiIGhlaWdodD0iMTIiIHJ4PSIyIi8+CiAgICA8cmVjdCB4PSI4MiIgeT0iNjAiIHdpZHRoPSIxMiIgaGVpZ2h0PSIzNCIgcng9IjIiLz4KICA8L2c+CiAgPHBhdGggZD0iTTMyIDY2IFYzNCBMNTAgNTQgTDY4IDM0IFY2NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRjI1NDFCIiBzdHJva2Utd2lkdGg9IjkiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt="" style="width:clamp(22px,2.6vw,30px); height:clamp(22px,2.6vw,30px); display:block; flex:none;"/>Michaels Corner</button>
         <a class="mh-sub" href="https://youtube.com" target="_blank" style="grid-area:sub; justify-self:end; font-size:13px; color:#15130F; text-decoration:none; display:inline-flex; align-items:center; gap:6px; border-bottom:1px solid #15130F; padding-bottom:2px; white-space:nowrap;" style-hover="color:#F2541B; border-color:#F2541B;">Subscribe <span>&#8599;</span></a>
       </div>
-      <nav class="mh-nav" style="border-top:1px solid #15130F; display:flex; justify-content:space-between; gap:8px 14px; flex-wrap:wrap;">
+      <nav class="mh-nav" style="border-top:1px solid #15130F; display:flex; justify-content:space-between; gap:4px 6px; flex-wrap:wrap; padding:11px 0 10px;">
         <sc-for list="{{ nav }}" as="n" hint-placeholder-count="5">
-          <button onClick="{{ n.onClick }}" style="background:none; border:none; border-bottom:2px solid transparent; font-family:'General Sans',sans-serif; font-size:clamp(14px,1.4vw,16px); cursor:pointer; padding:13px 2px 12px; margin-top:-1px; color:#15130F; transition:color 150ms ease, border-color 150ms ease; {{ n.activeCss }}" style-hover="color:#F2541B;">{{ n.label }}</button>
+          <button onClick="{{ n.onClick }}" style="background:none; border:none; font-family:'General Sans',sans-serif; font-size:clamp(14px,1.4vw,16px); cursor:pointer; padding:8px 12px; color:#15130F; transition:color 150ms ease; border-radius:2px; {{ n.activeCss }}" style-hover="color:#F2541B;">{{ n.label }}</button>
         </sc-for>
       </nav>
     </div>
@@ -96,7 +95,8 @@
         </section>
 
         <!-- TOP ROUTINES -->
-        <section style="border-top:1px solid #15130F;">
+        <section style="border-top:1px solid #15130F; position:relative;">
+          <canvas class="mc-dog" style="position:absolute; top:-50px; left:0; pointer-events:none; z-index:6; opacity:0; transition:opacity 200ms ease; will-change:transform;"></canvas>
           <div style="max-width:1440px; margin:0 auto; padding:clamp(34px,3.5vw,54px) clamp(20px,4vw,56px);">
             <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:18px; flex-wrap:wrap; margin-bottom:clamp(20px,2.5vw,30px);">
               <div>
@@ -710,7 +710,7 @@ class Component extends DCLogic {
     const s = this.state;
     const nav = this.navDefs.map(n => ({
       label: n.label, onClick: () => this.go(n.key),
-      activeCss: s.page === n.key ? 'color:#F2541B; font-weight:500; border-bottom-color:#F2541B;' : '',
+      activeCss: s.page === n.key ? 'color:#F2541B; font-weight:600;' : '',
     }));
 
     // ---- Routines ----
@@ -954,8 +954,8 @@ class Component extends DCLogic {
   function startMounts(){
     try { if (window.MCdots) MCdots.mountAll(document); } catch(e){}
     var root = document.getElementById('dc-root'); if (!root) return;
-    tagFx(root);
-    new MutationObserver(function(){ try { if (window.MCdots) MCdots.mountAll(root); tagFx(root); } catch(e){} }).observe(root, { childList: true, subtree: true });
+    tagFx(root); setupDogs(root);
+    new MutationObserver(function(){ try { if (window.MCdots) MCdots.mountAll(root); tagFx(root); setupDogs(root); } catch(e){} }).observe(root, { childList: true, subtree: true });
   }
 
   /* ---- remove the loader once the app has mounted (held a minimum time so it is seen) ---- */
@@ -976,34 +976,58 @@ class Component extends DCLogic {
     setTimeout(poll, 60);
   })();
 
-  /* ---- a small ASCII cat that wanders across the screen now and then (orange eyes) ---- */
-  (function critter(){
+  /* ---- a small dot-pixel dog that walks across the divider under the hero, now and then ---- */
+  function dogCell(cx, cy, phase){
+    var on = false;
+    if (Math.pow((cx-8)/6.2,2) + Math.pow((cy-7)/2.9,2) <= 1) on = true;            /* body */
+    if (Math.pow(cx-16,2) + Math.pow((cy-5)/1.05,2) <= 10) on = true;               /* head */
+    if ((cy===6||cy===7) && (cx>=19&&cx<=20)) on = true;                            /* snout */
+    if ((cx===13||cx===14) && (cy>=6&&cy<=9)) on = true;                            /* ear */
+    if ((cx===2&&(cy===5||cy===6)) || (cx===1&&(cy===3||cy===4))) on = true;        /* tail */
+    var aPlanted = (phase % 1) < 0.5;
+    function leg(col, isA){ if (cx!==col) return false; var down = (isA===aPlanted); return cy>=10 && cy<=(down?14:12); }
+    if (leg(4,true)||leg(15,true)||leg(7,false)||leg(12,false)) on = true;          /* 4 legs, animated */
+    if (!on) return null;
+    return (cx===17 && cy===4);                                                     /* eye = orange */
+  }
+  function drawDog(ctx, W, H, phase, dir){
+    var COLS=23, ROWS=16, sp=Math.min(W/COLS, H/ROWS), ox=(W-sp*COLS)/2, oy=(H-sp*ROWS)/2;
+    ctx.clearRect(0,0,W,H); ctx.save();
+    if (dir<0){ ctx.translate(W,0); ctx.scale(-1,1); }
+    for (var cy=0;cy<ROWS;cy++) for (var cx=0;cx<COLS;cx++){
+      var c = dogCell(cx,cy,phase); if (c===null) continue;
+      ctx.fillStyle = c ? '#F2541B' : '#15130F';
+      ctx.beginPath(); ctx.arc(ox+(cx+0.5)*sp, oy+(cy+0.5)*sp, sp*0.43, 0, 6.2832); ctx.fill();
+    }
+    ctx.restore();
+  }
+  function setupDog(canvas){
     if (RM) return;
-    var el = document.createElement('div'); el.id = 'mc-critter'; document.body.appendChild(el);
-    var EO = '<span style="color:#F2541B">..</span>', EB = '<span style="color:#F2541B">--</span>';
-    function frame(blink, dir){ var f = '=^' + (blink ? EB : EO) + '^='; return dir > 0 ? '~' + f : f + '~'; }
-    var start = 0, dur = 11000, y = 0, dir = 1, fromX = 0, toX = 0;
-    function step(now){
-      var p = (now - start) / dur;
-      if (p >= 1){ el.style.opacity = '0'; schedule(); return; }
-      var x = fromX + (toX - fromX) * p, bob = Math.sin(p * Math.PI * 16) * 3;
-      el.style.transform = 'translate(' + x.toFixed(1) + 'px,' + (y + bob).toFixed(1) + 'px)';
-      el.innerHTML = frame(Math.sin(p * Math.PI * 38) > 0.95, dir);
-      requestAnimationFrame(step);
+    var ctx=canvas.getContext('2d'), W=84, H=60, dpr=window.devicePixelRatio||1;
+    canvas.width=W*dpr; canvas.height=H*dpr; canvas.style.width=W+'px'; canvas.style.height=H+'px'; ctx.setTransform(dpr,0,0,dpr,0,0);
+    var section=canvas.parentElement, x=0, dir=1, dist=0, walking=false, lastT=0;
+    function tick(now){
+      if (!canvas.isConnected) return;
+      var dt=lastT?Math.min(50, now-lastT):16; lastT=now;
+      if (walking){
+        x += dir*0.075*dt; dist += 0.075*dt;
+        drawDog(ctx, W, H, dist/22, dir);
+        canvas.style.transform = 'translateX(' + x.toFixed(1) + 'px)';
+        var spanW = section.clientWidth;
+        if ((dir>0 && x>spanW+12) || (dir<0 && x<-W-12)){ walking=false; canvas.style.opacity='0'; schedule(); }
+      }
+      requestAnimationFrame(tick);
     }
-    function cross(){
-      var vw = window.innerWidth, vh = window.innerHeight, w = 74;
-      y = 160 + Math.random() * Math.max(120, vh - 290);
-      dir = Math.random() < 0.5 ? 1 : -1;
-      if (dir > 0){ fromX = -w; toX = vw + w; } else { fromX = vw + w; toX = -w; }
-      dur = 9000 + Math.random() * 6000;
-      start = (window.performance && performance.now) ? performance.now() : Date.now();
-      el.style.opacity = '1';
-      requestAnimationFrame(step);
-    }
-    function schedule(){ setTimeout(cross, 8000 + Math.random() * 20000); }
-    setTimeout(cross, 4500 + Math.random() * 3500);   /* first wander shortly after load, then now and then */
-  })();
+    function go(){ var spanW=section.clientWidth; dir=Math.random()<0.72?1:-1; x=dir>0?-W-6:spanW+6; dist=0; walking=true; canvas.style.opacity='1'; }
+    function schedule(){ setTimeout(go, 9000 + Math.random()*16000); }
+    canvas.style.opacity='0';
+    requestAnimationFrame(tick);
+    setTimeout(go, 2500 + Math.random()*2500);
+  }
+  function setupDogs(root){
+    var els = root.querySelectorAll('canvas.mc-dog:not([data-dog])');
+    for (var i=0;i<els.length;i++){ els[i].setAttribute('data-dog','1'); try { setupDog(els[i]); } catch(e){} }
+  }
 })();
 </script>
 </body>
