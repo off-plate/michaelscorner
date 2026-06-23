@@ -14,6 +14,13 @@
   #mc-wave .o{ color:#F2541B; }
   #mc-loader .mc-name{ font-size:11px; letter-spacing:0.4em; color:#8a847a; text-transform:uppercase; padding-left:0.4em; }
   #mc-loader .mc-cur{ color:#F2541B; animation:mc-blink 1s steps(1) infinite; }
+  /* universal hover: the brand's corner-bracket focus snaps in around any interactive element */
+  .mc-fx{ position:relative; }
+  .mc-fx::before, .mc-fx::after{ content:''; position:absolute; width:9px; height:9px; box-sizing:border-box; border:2px solid #F2541B; opacity:0; pointer-events:none; transition:opacity 150ms ease, transform 180ms cubic-bezier(0.22,0.61,0.36,1); }
+  .mc-fx::before{ top:-5px; left:-5px; border-right:0; border-bottom:0; transform:translate(-3px,-3px); }
+  .mc-fx::after{ bottom:-5px; right:-5px; border-left:0; border-top:0; transform:translate(3px,3px); }
+  .mc-fx:hover::before, .mc-fx:hover::after, .mc-fx:focus-visible::before, .mc-fx:focus-visible::after{ opacity:1; transform:translate(0,0); }
+  #mc-critter{ position:fixed; left:0; top:0; z-index:35; pointer-events:none; font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:15px; line-height:1; color:#15130F; white-space:pre; opacity:0; will-change:transform; }
 </style>
 <script src="./support.js"></script>
 </head>
@@ -870,7 +877,7 @@ class Component extends DCLogic {
       var mer=Math.abs(((lon/(Math.PI/4))%1+1)%1-0.5),par=Math.abs(((lat/(Math.PI/6))%1+1)%1-0.5);
       var gr=(mer>0.42||par>0.40)?1:0;
       var b=(0.16+gr*0.72)*lam+0.06;
-      var o=gr?clamp((S.vel-0.05)*0.95,0,0.85):0;          /* grid lines glow orange as it spins on hover */
+      var o=gr?clamp((S.vel-0.45)*0.95,0,0.85):0;          /* ink while idling slowly, glows orange when spun up on hover */
       return[clamp(b,0,1),o];
     }}
   };
@@ -902,7 +909,7 @@ class Component extends DCLogic {
   Icon.prototype.tick=function(t){
     if(!this.c.isConnected)return;
     var dt=this.lastT?Math.min(0.05,t-this.lastT):0.016;this.lastT=t;this.S.t=t;
-    if(this.def.spin&&!RM){var target=this.S.hover?1.25:0.0;this.S.vel+=(target-this.S.vel)*Math.min(1,dt*4);this.S.ang+=this.S.vel*dt;}
+    if(this.def.spin&&!RM){var target=this.S.hover?1.35:0.18;this.S.vel+=(target-this.S.vel)*Math.min(1,dt*4);this.S.ang+=this.S.vel*dt;}
     var spinning=this.def.spin&&(this.S.vel>0.002);
     var live=(this.def.anim&&!RM)||this.dirty||(this.S.hover&&this.def.hover)||spinning;
     if(!this.drew)live=true;
@@ -939,11 +946,16 @@ class Component extends DCLogic {
   }
   if (wave) drawWave(t0);
 
-  /* ---- mount the dot icons, now and on every navigation ---- */
+  /* ---- mount the dot icons + tag interactive elements for the corner-bracket hover, now and on every navigation ---- */
+  function tagFx(root){
+    var els = root.querySelectorAll('button, a[href]');
+    for (var i = 0; i < els.length; i++){ var e = els[i]; if (e.classList.contains('mh-word')) continue; if (!e.classList.contains('mc-fx')) e.classList.add('mc-fx'); }
+  }
   function startMounts(){
     try { if (window.MCdots) MCdots.mountAll(document); } catch(e){}
     var root = document.getElementById('dc-root'); if (!root) return;
-    new MutationObserver(function(){ try { if (window.MCdots) MCdots.mountAll(root); } catch(e){} }).observe(root, { childList: true, subtree: true });
+    tagFx(root);
+    new MutationObserver(function(){ try { if (window.MCdots) MCdots.mountAll(root); tagFx(root); } catch(e){} }).observe(root, { childList: true, subtree: true });
   }
 
   /* ---- remove the loader once the app has mounted (held a minimum time so it is seen) ---- */
@@ -962,6 +974,35 @@ class Component extends DCLogic {
     if (ready() && elapsed >= MINMS) return hideLoader();
     if (tries++ > 220) return hideLoader();
     setTimeout(poll, 60);
+  })();
+
+  /* ---- a small ASCII cat that wanders across the screen now and then (orange eyes) ---- */
+  (function critter(){
+    if (RM) return;
+    var el = document.createElement('div'); el.id = 'mc-critter'; document.body.appendChild(el);
+    var EO = '<span style="color:#F2541B">..</span>', EB = '<span style="color:#F2541B">--</span>';
+    function frame(blink, dir){ var f = '=^' + (blink ? EB : EO) + '^='; return dir > 0 ? '~' + f : f + '~'; }
+    var start = 0, dur = 11000, y = 0, dir = 1, fromX = 0, toX = 0;
+    function step(now){
+      var p = (now - start) / dur;
+      if (p >= 1){ el.style.opacity = '0'; schedule(); return; }
+      var x = fromX + (toX - fromX) * p, bob = Math.sin(p * Math.PI * 16) * 3;
+      el.style.transform = 'translate(' + x.toFixed(1) + 'px,' + (y + bob).toFixed(1) + 'px)';
+      el.innerHTML = frame(Math.sin(p * Math.PI * 38) > 0.95, dir);
+      requestAnimationFrame(step);
+    }
+    function cross(){
+      var vw = window.innerWidth, vh = window.innerHeight, w = 74;
+      y = 160 + Math.random() * Math.max(120, vh - 290);
+      dir = Math.random() < 0.5 ? 1 : -1;
+      if (dir > 0){ fromX = -w; toX = vw + w; } else { fromX = vw + w; toX = -w; }
+      dur = 9000 + Math.random() * 6000;
+      start = (window.performance && performance.now) ? performance.now() : Date.now();
+      el.style.opacity = '1';
+      requestAnimationFrame(step);
+    }
+    function schedule(){ setTimeout(cross, 8000 + Math.random() * 20000); }
+    setTimeout(cross, 4500 + Math.random() * 3500);   /* first wander shortly after load, then now and then */
   })();
 })();
 </script>
