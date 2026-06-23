@@ -3,9 +3,29 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Michael's Corner</title>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9Ik1pY2hhZWwncyBDb3JuZXIiPgogIDxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiByeD0iMTAiIGZpbGw9IiNGQUY3RjIiLz4KICA8ZyBmaWxsPSIjMTUxMzBGIj4KICAgIDxyZWN0IHg9IjE0IiB5PSIxNCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjgiIHJ4PSIyIi8+CiAgICA8cmVjdCB4PSIxNCIgeT0iMTQiIHdpZHRoPSI4IiBoZWlnaHQ9IjQwIiByeD0iMiIvPgogICAgPHJlY3QgeD0iNDYiIHk9Ijc4IiB3aWR0aD0iNDAiIGhlaWdodD0iOCIgcng9IjIiLz4KICAgIDxyZWN0IHg9Ijc4IiB5PSI0NiIgd2lkdGg9IjgiIGhlaWdodD0iNDAiIHJ4PSIyIi8+CiAgPC9nPgo8L3N2Zz4K"/>
+<style id="mc-fx">
+  @keyframes mc-blink { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+  @keyframes mc-failsafe { to { opacity:0; visibility:hidden; pointer-events:none; } }
+  #mc-loader{ position:fixed; inset:0; z-index:9999; background:#FAF7F2; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; font-family:ui-monospace,'SF Mono',Menlo,monospace; transition:opacity 260ms cubic-bezier(0.22,0.61,0.36,1); animation:mc-failsafe 0s linear 7s forwards; }
+  #mc-loader.mc-hide{ opacity:0; pointer-events:none; }
+  #mc-wave{ margin:0; font-size:clamp(12px,1.9vw,17px); line-height:1.4; letter-spacing:2px; white-space:pre; color:#15130F; }
+  #mc-wave .o{ color:#F2541B; }
+  #mc-loader .mc-name{ font-size:11px; letter-spacing:0.4em; color:#8a847a; text-transform:uppercase; padding-left:0.4em; }
+  #mc-loader .mc-cur{ color:#F2541B; animation:mc-blink 1s steps(1) infinite; }
+  #mc-trans{ position:fixed; inset:0; z-index:9998; background:#FAF7F2; opacity:0; pointer-events:none; overflow:hidden; }
+  #mc-trans pre{ margin:0; position:absolute; inset:0; font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:13px; line-height:15px; letter-spacing:1px; color:#cfc7b8; white-space:pre; }
+  #mc-trans .mc-scan{ position:absolute; left:0; right:0; height:2px; background:#F2541B; top:-4px; }
+  @media (prefers-reduced-motion: reduce){ #mc-trans{ display:none !important } }
+</style>
 <script src="./support.js"></script>
 </head>
 <body>
+<div id="mc-loader">
+  <div id="mc-wave">loading</div>
+  <div class="mc-name">Michael's Corner<span class="mc-cur">_</span></div>
+</div>
 <x-dc>
 <helmet>
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=clash-display@600,700&f[]=general-sans@400,500&display=swap">
@@ -36,7 +56,7 @@
     <div style="max-width:1440px; margin:0 auto; padding:0 clamp(20px,4vw,56px);">
       <div class="mh-top" style="display:grid; grid-template-columns:1fr auto 1fr; grid-template-areas:'handle word sub'; align-items:center; gap:14px; padding:15px 0 13px;">
         <a class="mh-handle" href="https://instagram.com" target="_blank" style="grid-area:handle; justify-self:start; font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:12px; letter-spacing:0.03em; color:#8a847a; text-decoration:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%;" style-hover="color:#F2541B;">@michaelflorian_ai</a>
-        <button class="mh-word" onClick="{{ goHome }}" style="grid-area:word; justify-self:center; background:none; border:none; cursor:pointer; font-family:'Clash Display',sans-serif; font-weight:700; font-size:clamp(20px,2.6vw,30px); letter-spacing:-0.01em; color:#15130F; padding:0; white-space:nowrap;">Michaels Corner</button>
+        <button class="mh-word" onClick="{{ goHome }}" style="grid-area:word; justify-self:center; display:inline-flex; align-items:center; gap:clamp(8px,1vw,11px); background:none; border:none; cursor:pointer; font-family:'Clash Display',sans-serif; font-weight:700; font-size:clamp(20px,2.6vw,30px); letter-spacing:-0.01em; color:#15130F; padding:0; white-space:nowrap;"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9Ik1pY2hhZWwncyBDb3JuZXIiPgogIDxnIGZpbGw9IiMxNTEzMEYiPgogICAgPHJlY3QgeD0iNiIgeT0iNiIgd2lkdGg9IjM0IiBoZWlnaHQ9IjEyIiByeD0iMiIvPgogICAgPHJlY3QgeD0iNiIgeT0iNiIgd2lkdGg9IjEyIiBoZWlnaHQ9IjM0IiByeD0iMiIvPgogICAgPHJlY3QgeD0iNjAiIHk9IjgyIiB3aWR0aD0iMzQiIGhlaWdodD0iMTIiIHJ4PSIyIi8+CiAgICA8cmVjdCB4PSI4MiIgeT0iNjAiIHdpZHRoPSIxMiIgaGVpZ2h0PSIzNCIgcng9IjIiLz4KICA8L2c+CiAgPHBhdGggZD0iTTMyIDY2IFYzNCBMNTAgNTQgTDY4IDM0IFY2NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRjI1NDFCIiBzdHJva2Utd2lkdGg9IjkiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt="" style="width:clamp(22px,2.6vw,30px); height:clamp(22px,2.6vw,30px); display:block; flex:none;"/>Michaels Corner</button>
         <a class="mh-sub" href="https://youtube.com" target="_blank" style="grid-area:sub; justify-self:end; font-size:13px; color:#15130F; text-decoration:none; display:inline-flex; align-items:center; gap:6px; border-bottom:1px solid #15130F; padding-bottom:2px; white-space:nowrap;" style-hover="color:#F2541B; border-color:#F2541B;">Subscribe <span>&#8599;</span></a>
       </div>
       <nav class="mh-nav" style="border-top:1px solid #15130F; display:flex; justify-content:space-between; gap:8px 14px; flex-wrap:wrap;">
@@ -812,6 +832,81 @@ class Component extends DCLogic {
     };
   }
 }
+</script>
+<div id="mc-trans"><pre></pre><div class="mc-scan"></div></div>
+<script>
+/* Michael's Corner: ASCII loader + page-transition. Runs alongside the dc-runtime,
+   touches only its own body-level overlays (#mc-loader, #mc-trans). */
+(function(){
+  var RM = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var loader = document.getElementById('mc-loader');
+  var wave = document.getElementById('mc-wave');
+
+  /* ---- ASCII loader: a flowing character wave inside corner brackets ---- */
+  var RAMP = ' .:-=+*#%@', N = 22;
+  var BR = '│', TL = '┌', TR = '┐', BL = '└', BRr = '┘', H = '─';
+  var TOP = TL + new Array(N + 3).join(H) + TR;
+  var BOT = BL + new Array(N + 3).join(H) + BRr;
+  var t0 = (window.performance && performance.now) ? performance.now() : Date.now(), waveRAF = 0;
+  function drawWave(now){
+    var t = ((now || Date.now()) - t0) / 1000, mid = '';
+    for (var i = 0; i < N; i++){
+      var v = 0.5 + 0.5 * Math.sin(t * 3.4 - i * 0.5);
+      var ch = RAMP.charAt(Math.max(0, Math.min(RAMP.length - 1, Math.round(v * (RAMP.length - 1)))));
+      mid += (v > 0.86) ? '<span class="o">' + ch + '</span>' : ch;
+    }
+    wave.innerHTML = TOP + '\n' + BR + ' ' + mid + ' ' + BR + '\n' + BOT;
+    if (!RM) waveRAF = requestAnimationFrame(drawWave);
+  }
+  if (wave) drawWave(t0);
+
+  /* ---- remove the loader once the app has mounted ---- */
+  function ready(){ var r = document.getElementById('dc-root'); return !!(r && r.querySelector && r.querySelector('header')); }
+  function hideLoader(){
+    if (!loader) return;
+    if (waveRAF) cancelAnimationFrame(waveRAF);
+    loader.classList.add('mc-hide');
+    var el = loader; loader = null;
+    setTimeout(function(){ if (el && el.parentNode) el.parentNode.removeChild(el); }, 300);
+    initTransitions();
+  }
+  var tries = 0;
+  (function poll(){
+    if (ready()) return hideLoader();
+    if (tries++ > 140) return hideLoader();   /* ~7s give-up, app shows regardless */
+    setTimeout(poll, 50);
+  })();
+
+  /* ---- subtle ASCII page transition when the screen changes ---- */
+  function initTransitions(){
+    if (RM) return;
+    var trans = document.getElementById('mc-trans'), root = document.getElementById('dc-root');
+    if (!trans || !root) return;
+    var pre = trans.querySelector('pre'), scan = trans.querySelector('.mc-scan');
+    var CH = '01<>/\\|-_=+:.* ';
+    function label(){ var e = root.querySelector('[data-screen-label]'); return e ? e.getAttribute('data-screen-label') : ''; }
+    var last = label();
+    function fill(){
+      var cols = Math.min(220, Math.ceil(window.innerWidth / 8)), rows = Math.min(90, Math.ceil(window.innerHeight / 15)), s = '';
+      for (var r = 0; r < rows; r++){ var ln = ''; for (var c = 0; c < cols; c++){ ln += (Math.random() < 0.10) ? CH.charAt((Math.random() * CH.length) | 0) : ' '; } s += ln + '\n'; }
+      pre.textContent = s;
+    }
+    function play(){
+      fill();
+      trans.style.transition = 'none'; trans.style.opacity = '0.94';
+      scan.style.transition = 'none'; scan.style.top = '-4px';
+      void trans.offsetWidth;
+      trans.style.transition = 'opacity 320ms cubic-bezier(0.22,0.61,0.36,1)';
+      scan.style.transition = 'top 320ms cubic-bezier(0.22,0.61,0.36,1)';
+      trans.style.opacity = '0';
+      scan.style.top = (window.innerHeight + 6) + 'px';
+    }
+    new MutationObserver(function(){
+      var l = label();
+      if (l && l !== last){ last = l; play(); }
+    }).observe(root, { childList: true, subtree: true });
+  }
+})();
 </script>
 </body>
 </html>
