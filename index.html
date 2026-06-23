@@ -14,10 +14,6 @@
   #mc-wave .o{ color:#F2541B; }
   #mc-loader .mc-name{ font-size:11px; letter-spacing:0.4em; color:#8a847a; text-transform:uppercase; padding-left:0.4em; }
   #mc-loader .mc-cur{ color:#F2541B; animation:mc-blink 1s steps(1) infinite; }
-  #mc-trans{ position:fixed; inset:0; z-index:9998; background:#FAF7F2; opacity:0; pointer-events:none; overflow:hidden; }
-  #mc-trans pre{ margin:0; position:absolute; inset:0; font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:13px; line-height:15px; letter-spacing:1px; color:#6b655b; white-space:pre; }
-  #mc-trans .mc-scan{ position:absolute; left:0; right:0; height:3px; background:#F2541B; top:-4px; box-shadow:0 0 10px 1px rgba(242,84,27,0.5); }
-  @media (prefers-reduced-motion: reduce){ #mc-trans{ display:none !important } }
 </style>
 <script src="./support.js"></script>
 </head>
@@ -74,7 +70,7 @@
       <div data-screen-label="Home">
         <section style="max-width:1440px; margin:0 auto; padding:clamp(36px,4vw,60px) clamp(20px,4vw,56px) clamp(28px,3vw,44px); display:grid; grid-template-columns:repeat(auto-fit,minmax(min(330px,100%),1fr)); gap:clamp(28px,4vw,60px); align-items:center;">
           <div>
-            <canvas class="mc-i" data-icon="pulse" data-size="50" style="width:50px; height:50px; display:block; margin:0 0 16px -4px;"></canvas>
+            <canvas class="mc-i" data-icon="globe" data-size="58" title="hover me" style="width:58px; height:58px; display:block; margin:0 0 16px -4px;"></canvas>
             <p style="margin:0 0 18px; font-size:14px; letter-spacing:0.08em; text-transform:uppercase; color:#F2541B; font-weight:500;">Michael Florian &middot; @michaelflorian_ai</p>
             <h1 style="margin:0 0 20px; font-family:'Clash Display',sans-serif; font-weight:700; font-size:clamp(38px,5.2vw,72px); line-height:0.98; letter-spacing:-0.025em;">AI did not take my job. It made me faster.</h1>
             <p style="margin:0 0 28px; font-size:clamp(17px,1.4vw,20px); line-height:1.55; max-width:44ch; color:#3f3a31;">I figure out how to use AI day to day, then I package the routines and tools and give them away. You came from my profile, so here is everything, free to take.</p>
@@ -847,16 +843,17 @@ class Component extends DCLogic {
   function len(x,y){return Math.sqrt(x*x+y*y);}
   function mixc(o){o=clamp(o,0,1);return 'rgb('+Math.round(INK[0]+(ORANGE[0]-INK[0])*o)+','+Math.round(INK[1]+(ORANGE[1]-INK[1])*o)+','+Math.round(INK[2]+(ORANGE[2]-INK[2])*o)+')';}
   var DEFS={
-    person:{anim:false,hover:true,grid:30,cell:function(px,py,S){
+    person:{anim:false,hover:true,grid:62,cell:function(px,py,S){
       var inHead=len(px,py+0.62)<0.30;
       var hw=-1;
       if(py>=-0.34){var sIn=smooth(-0.34,0.06,py);hw=0.14+sIn*0.56;}
       var inBody=(py>=-0.34)&&(Math.abs(px)<=hw);
       if(!(inHead||inBody))return null;
       var grad=clamp((py+1.0)/2.0,0,1);
-      var noise=0.12*Math.sin(px*10+py*8)+0.09*Math.cos(px*6-py*12);
-      var b=clamp(0.5+0.4*grad+noise,0.2,1);
-      var o=0; if(S.hover){var d=len(px-S.mx,py-S.my);o=clamp(1-d/0.42,0,1);}
+      var noise=0.10*Math.sin(px*16+py*13)+0.08*Math.cos(px*11-py*19);
+      var b=clamp(0.52+0.4*grad+noise,0.18,1);
+      var o=clamp((py-0.34)*0.85,0,0.55);                 /* warm orange gradient toward the lower figure */
+      if(S.hover){var d=len(px-S.mx,py-S.my);o=Math.max(o,clamp(1-d/0.4,0,1));}
       return [b,o];
     }},
     pulse:{anim:true,grid:15,cell:function(px,py,S){
@@ -865,21 +862,22 @@ class Component extends DCLogic {
       if(d<0.13)return[0.95,1];
       return b>0.04?[b,0]:null;
     }},
-    globe:{anim:true,grid:18,cell:function(px,py,S){
+    globe:{anim:false,hover:true,spin:true,grid:21,cell:function(px,py,S){
       var R=0.84,u=px/R,w=py/R,d2=u*u+w*w;if(d2>1)return null;
       var z=Math.sqrt(1-d2);
       var lam=clamp((-u)*0.45+(-w)*0.5+z*0.74,0,1);
-      var lon=Math.atan2(u,z)+S.t*0.5,lat=Math.asin(clamp(-w,-1,1));
+      var lon=Math.atan2(u,z)+S.ang,lat=Math.asin(clamp(-w,-1,1));
       var mer=Math.abs(((lon/(Math.PI/4))%1+1)%1-0.5),par=Math.abs(((lat/(Math.PI/6))%1+1)%1-0.5);
       var gr=(mer>0.42||par>0.40)?1:0;
       var b=(0.16+gr*0.72)*lam+0.06;
-      return[clamp(b,0,1),0];
+      var o=gr?clamp((S.vel-0.05)*0.95,0,0.85):0;          /* grid lines glow orange as it spins on hover */
+      return[clamp(b,0,1),o];
     }}
   };
   var insts=[],running=false,RM=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
   function Icon(canvas,def,opts){
     this.c=canvas;this.x=canvas.getContext('2d');this.def=def;this.opts=opts||{};
-    this.S={t:0,hover:false,mx:9,my:9};this.dirty=true;this.drew=false;var self=this;
+    this.S={t:0,hover:false,mx:9,my:9,ang:0,vel:0};this.dirty=true;this.drew=false;var self=this;
     this.size();
     if(def.hover&&!RM){canvas.style.cursor='crosshair';
       canvas.addEventListener('pointermove',function(e){var r=canvas.getBoundingClientRect();self.S.mx=((e.clientX-r.left)/r.width)*2-1;self.S.my=(((e.clientY-r.top)/r.height)*2-1)*self.asp;self.S.hover=true;self.dirty=true;});
@@ -901,17 +899,23 @@ class Component extends DCLogic {
       x.fillStyle=mixc(o);var rad=sp*(0.12+b*0.42);x.beginPath();x.arc((i+0.5)*sp,(j+0.5)*sp,rad,0,6.2832);x.fill();
     }}this.drew=true;
   };
-  Icon.prototype.tick=function(t){if(!this.c.isConnected)return;this.S.t=t;var live=(this.def.anim&&!RM)||this.dirty||(this.S.hover&&this.def.hover);if(!this.drew)live=true;if(live){this.dirty=false;this.draw();}};
+  Icon.prototype.tick=function(t){
+    if(!this.c.isConnected)return;
+    var dt=this.lastT?Math.min(0.05,t-this.lastT):0.016;this.lastT=t;this.S.t=t;
+    if(this.def.spin&&!RM){var target=this.S.hover?1.25:0.0;this.S.vel+=(target-this.S.vel)*Math.min(1,dt*4);this.S.ang+=this.S.vel*dt;}
+    var spinning=this.def.spin&&(this.S.vel>0.002);
+    var live=(this.def.anim&&!RM)||this.dirty||(this.S.hover&&this.def.hover)||spinning;
+    if(!this.drew)live=true;
+    if(live){this.dirty=false;this.draw();}
+  };
   function loop(ts){var t=ts*0.001;for(var i=0;i<insts.length;i++)insts[i].tick(t);requestAnimationFrame(loop);}
   function start(){if(running)return;running=true;requestAnimationFrame(loop);}
   function mountAll(root){root=root||document;var els=root.querySelectorAll('canvas.mc-i:not([data-mounted])');for(var i=0;i<els.length;i++){var el=els[i],key=el.getAttribute('data-icon'),def=DEFS[key];if(!def)continue;el.setAttribute('data-mounted','1');var opts={},ds=el.getAttribute('data-size');if(ds)opts.size=+ds;try{new Icon(el,def,opts);}catch(e){}}start();}
   window.MCdots={mountAll:mountAll,DEFS:DEFS};
 })();
 </script>
-<div id="mc-trans"><pre></pre><div class="mc-scan"></div></div>
 <script>
-/* Michael's Corner: ASCII loader + page-transition. Runs alongside the dc-runtime,
-   touches only its own body-level overlays (#mc-loader, #mc-trans). */
+/* Michael's Corner: ASCII loader (keeps the dc-runtime untouched; mounts the dot icons after load + on navigation). */
 (function(){
   var RM = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
   var loader = document.getElementById('mc-loader');
@@ -935,7 +939,14 @@ class Component extends DCLogic {
   }
   if (wave) drawWave(t0);
 
-  /* ---- remove the loader once the app has mounted ---- */
+  /* ---- mount the dot icons, now and on every navigation ---- */
+  function startMounts(){
+    try { if (window.MCdots) MCdots.mountAll(document); } catch(e){}
+    var root = document.getElementById('dc-root'); if (!root) return;
+    new MutationObserver(function(){ try { if (window.MCdots) MCdots.mountAll(root); } catch(e){} }).observe(root, { childList: true, subtree: true });
+  }
+
+  /* ---- remove the loader once the app has mounted (held a minimum time so it is seen) ---- */
   function ready(){ var r = document.getElementById('dc-root'); return !!(r && r.querySelector && r.querySelector('header')); }
   function hideLoader(){
     if (!loader) return;
@@ -943,53 +954,15 @@ class Component extends DCLogic {
     loader.classList.add('mc-hide');
     var el = loader; loader = null;
     setTimeout(function(){ if (el && el.parentNode) el.parentNode.removeChild(el); }, 300);
-    initTransitions();
-    try { if (window.MCdots) MCdots.mountAll(document); } catch(e){}
+    startMounts();
   }
-  var tries = 0, MINMS = 1700;   /* keep the loader on screen long enough to actually be seen */
+  var tries = 0, MINMS = 1700;
   (function poll(){
     var elapsed = ((window.performance && performance.now) ? performance.now() : Date.now()) - t0;
     if (ready() && elapsed >= MINMS) return hideLoader();
-    if (tries++ > 220) return hideLoader();   /* give-up, app shows regardless */
+    if (tries++ > 220) return hideLoader();
     setTimeout(poll, 60);
   })();
-
-  /* ---- subtle ASCII page transition when the screen changes ---- */
-  function initTransitions(){
-    if (RM) return;
-    var trans = document.getElementById('mc-trans'), root = document.getElementById('dc-root');
-    if (!trans || !root) return;
-    var pre = trans.querySelector('pre'), scan = trans.querySelector('.mc-scan');
-    var CH = '01<>/\\|-_=+:.* ';
-    function label(){ var e = root.querySelector('[data-screen-label]'); return e ? e.getAttribute('data-screen-label') : ''; }
-    var last = label();
-    function fill(){
-      var cols = Math.min(240, Math.ceil(window.innerWidth / 8)), rows = Math.min(100, Math.ceil(window.innerHeight / 15)), s = '';
-      for (var r = 0; r < rows; r++){ var ln = '';
-        for (var c = 0; c < cols; c++){
-          if (Math.random() < 0.16){ var ch = CH.charAt((Math.random() * CH.length) | 0); ln += (Math.random() < 0.12) ? '<span style="color:#F2541B">' + ch + '</span>' : ch; }
-          else ln += ' ';
-        }
-        s += ln + '\n';
-      }
-      pre.innerHTML = s;
-    }
-    function play(){
-      fill();
-      trans.style.transition = 'none'; trans.style.opacity = '1';
-      scan.style.transition = 'none'; scan.style.top = '-6px';
-      void trans.offsetWidth;
-      trans.style.transition = 'opacity 520ms cubic-bezier(0.22,0.61,0.36,1)';
-      scan.style.transition = 'top 520ms cubic-bezier(0.22,0.61,0.36,1)';
-      trans.style.opacity = '0';
-      scan.style.top = (window.innerHeight + 8) + 'px';
-    }
-    new MutationObserver(function(){
-      try { if (window.MCdots) MCdots.mountAll(root); } catch(e){}
-      var l = label();
-      if (l && l !== last){ last = l; play(); }
-    }).observe(root, { childList: true, subtree: true });
-  }
 })();
 </script>
 </body>
