@@ -21,16 +21,23 @@
   .mc-fx::after{ bottom:-5px; right:-5px; border-left:0; border-top:0; transform:translate(3px,3px); }
   .mc-fx:hover::before, .mc-fx:hover::after, .mc-fx:focus-visible::before, .mc-fx:focus-visible::after{ opacity:1; transform:translate(0,0); }
   /* orange corner brackets framing the portrait (brand "Corner" mark), focus-snap in on load */
-  .mc-corner{ position:absolute; width:24px; height:24px; border:2.5px solid #F2541B; pointer-events:none; z-index:2; }
-  .mc-corner.tl{ top:9px; left:9px; border-right:none; border-bottom:none; animation:mc-cn-tl 220ms cubic-bezier(0.22,0.61,0.36,1) both; }
-  .mc-corner.tr{ top:9px; right:9px; border-left:none; border-bottom:none; animation:mc-cn-tr 220ms 45ms cubic-bezier(0.22,0.61,0.36,1) both; }
-  .mc-corner.bl{ bottom:9px; left:9px; border-right:none; border-top:none; animation:mc-cn-bl 220ms 90ms cubic-bezier(0.22,0.61,0.36,1) both; }
-  .mc-corner.br{ bottom:9px; right:9px; border-left:none; border-top:none; animation:mc-cn-br 220ms 135ms cubic-bezier(0.22,0.61,0.36,1) both; }
+  .mc-corner{ position:absolute; width:24px; height:24px; border:2.5px solid #F2541B; pointer-events:none; z-index:2; transition:transform 260ms cubic-bezier(0.22,0.61,0.36,1); }
+  .mc-corner.tl{ top:9px; left:9px; border-right:none; border-bottom:none; animation:mc-cn-tl 220ms cubic-bezier(0.22,0.61,0.36,1) backwards; }
+  .mc-corner.tr{ top:9px; right:9px; border-left:none; border-bottom:none; animation:mc-cn-tr 220ms 45ms cubic-bezier(0.22,0.61,0.36,1) backwards; }
+  .mc-corner.bl{ bottom:9px; left:9px; border-right:none; border-top:none; animation:mc-cn-bl 220ms 90ms cubic-bezier(0.22,0.61,0.36,1) backwards; }
+  .mc-corner.br{ bottom:9px; right:9px; border-left:none; border-top:none; animation:mc-cn-br 220ms 135ms cubic-bezier(0.22,0.61,0.36,1) backwards; }
   @keyframes mc-cn-tl{ from{opacity:0;transform:translate(-8px,-8px)} to{opacity:1;transform:none} }
   @keyframes mc-cn-tr{ from{opacity:0;transform:translate(8px,-8px)} to{opacity:1;transform:none} }
   @keyframes mc-cn-bl{ from{opacity:0;transform:translate(-8px,8px)} to{opacity:1;transform:none} }
   @keyframes mc-cn-br{ from{opacity:0;transform:translate(8px,8px)} to{opacity:1;transform:none} }
-  @media (prefers-reduced-motion: reduce){ .mc-corner{ animation:none !important; } }
+  /* playful hover: the photo dissolves into its dot-matrix halftone; the corners tighten like a lens focusing */
+  .mc-portrait-overlay{ position:absolute; inset:0; width:100%; height:100%; background:#FAF7F2; opacity:0; transition:opacity 340ms cubic-bezier(0.22,0.61,0.36,1); pointer-events:none; z-index:1; }
+  .mc-photo:hover .mc-portrait-overlay{ opacity:1; }
+  .mc-photo:hover .mc-corner.tl{ transform:translate(5px,5px); }
+  .mc-photo:hover .mc-corner.tr{ transform:translate(-5px,5px); }
+  .mc-photo:hover .mc-corner.bl{ transform:translate(5px,-5px); }
+  .mc-photo:hover .mc-corner.br{ transform:translate(-5px,-5px); }
+  @media (prefers-reduced-motion: reduce){ .mc-corner{ animation:none !important; } .mc-portrait-overlay{ transition:opacity 120ms ease; } }
 </style>
 <script src="./support.js"></script>
 </head>
@@ -97,8 +104,9 @@
             </div>
           </div>
           <div>
-            <div class="hero-photo" style="aspect-ratio:4/5; border:1px solid #15130F; background:#FAF7F2; position:relative; overflow:hidden;">
+            <div class="hero-photo mc-photo" style="aspect-ratio:4/5; border:1px solid #15130F; background:#FAF7F2; position:relative; overflow:hidden;">
               <img src="portrait.jpg" alt="Michael Florian" style="width:100%; height:100%; object-fit:cover; display:block;" />
+              <canvas class="mc-i mc-portrait-overlay" data-icon="portrait"></canvas>
               <span class="mc-corner tl"></span><span class="mc-corner tr"></span><span class="mc-corner bl"></span><span class="mc-corner br"></span>
             </div>
           </div>
@@ -483,8 +491,9 @@
     <sc-if value="{{ isAbout }}" hint-placeholder-val="{{ false }}">
       <div data-screen-label="About" style="max-width:1440px; margin:0 auto; padding:clamp(40px,5vw,68px) clamp(20px,4vw,56px) clamp(48px,5vw,90px); display:grid; grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr)); gap:clamp(32px,4vw,64px); align-items:start;">
         <div>
-          <div style="aspect-ratio:4/5; border:1px solid #15130F; background:#FAF7F2; position:relative; overflow:hidden;">
+          <div class="mc-photo" style="aspect-ratio:4/5; border:1px solid #15130F; background:#FAF7F2; position:relative; overflow:hidden;">
             <img src="portrait.jpg" alt="Michael Florian" style="width:100%; height:100%; object-fit:cover; display:block;" />
+            <canvas class="mc-i mc-portrait-overlay" data-icon="portrait"></canvas>
             <span class="mc-corner tl"></span><span class="mc-corner tr"></span><span class="mc-corner bl"></span><span class="mc-corner br"></span>
           </div>
         </div>
