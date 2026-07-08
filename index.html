@@ -10,8 +10,12 @@
   @keyframes mc-failsafe { to { opacity:0; visibility:hidden; pointer-events:none; } }
   #mc-loader{ position:fixed; inset:0; z-index:9999; background:#FAF7F2; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; font-family:ui-monospace,'SF Mono',Menlo,monospace; transition:opacity 260ms cubic-bezier(0.22,0.61,0.36,1); animation:mc-failsafe 0s linear 7s forwards; }
   #mc-loader.mc-hide{ opacity:0; pointer-events:none; }
-  #mc-wave{ margin:0; font-size:clamp(12px,1.9vw,17px); line-height:1.4; letter-spacing:2px; white-space:pre; color:#15130F; }
-  #mc-wave .o{ color:#F2541B; }
+  #mc-wave{ margin:0; font-size:clamp(22px,4.6vw,40px); line-height:1; letter-spacing:3px; white-space:pre; color:#F2541B; }
+  /* the signature mark, alive: the Corner brackets snap in around the wave */
+  .mc-sig{ position:relative; padding:18px 26px; }
+  .mc-sig .cn{ position:absolute; width:15px; height:15px; border:2px solid #F2541B; }
+  .mc-sig .cn.tl{ top:0; left:0; border-right:0; border-bottom:0; animation:mc-cn-tl 240ms cubic-bezier(0.22,0.61,0.36,1) backwards; }
+  .mc-sig .cn.br{ bottom:0; right:0; border-left:0; border-top:0; animation:mc-cn-br 240ms 60ms cubic-bezier(0.22,0.61,0.36,1) backwards; }
   #mc-loader .mc-name{ font-size:11px; letter-spacing:0.4em; color:#8a847a; text-transform:uppercase; padding-left:0.4em; }
   #mc-loader .mc-cur{ color:#F2541B; animation:mc-blink 1s steps(1) infinite; }
   /* universal hover: the brand's corner-bracket focus snaps in around any interactive element */
@@ -37,13 +41,16 @@
   .mc-photo:hover .mc-corner.tr{ transform:translate(-5px,5px); }
   .mc-photo:hover .mc-corner.bl{ transform:translate(5px,-5px); }
   .mc-photo:hover .mc-corner.br{ transform:translate(-5px,-5px); }
-  @media (prefers-reduced-motion: reduce){ .mc-corner{ animation:none !important; } .mc-portrait-overlay{ transition:opacity 120ms ease; } }
+  /* one route-enter transition, single easing curve */
+  @keyframes mc-enter{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:none; } }
+  .mc-enter{ animation:mc-enter 240ms cubic-bezier(0.22,0.61,0.36,1) both; }
+  @media (prefers-reduced-motion: reduce){ .mc-corner, .mc-sig .cn{ animation:none !important; } .mc-portrait-overlay{ transition:opacity 120ms ease; } .mc-enter{ animation:none; } }
 </style>
 <script src="./support.js"></script>
 </head>
 <body>
 <div id="mc-loader">
-  <div id="mc-wave">loading</div>
+  <div class="mc-sig"><span class="cn tl"></span><span class="cn br"></span><div id="mc-wave">&#9601;&#9602;&#9603;&#9604;&#9605;&#9606;&#9607;&#9608;</div></div>
   <div class="mc-name">Michael's Corner<span class="mc-cur">_</span></div>
 </div>
 <x-dc>
@@ -406,7 +413,12 @@
             </div>
             <div style="padding:clamp(24px,3vw,36px); background:#15130F; color:#f3ede2; display:flex; flex-direction:column; min-height:280px;">
               <p style="margin:0 0 14px; font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:#F2541B; font-weight:500;">Result</p>
-              <div style="flex:1; font-size:15px; line-height:1.6; color:#d9d2c5;">{{ toolOutput }}</div>
+              <sc-if value="{{ toolRunning }}" hint-placeholder-val="{{ false }}">
+                <div style="flex:1; display:flex; align-items:center; gap:12px; font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:13px; letter-spacing:0.12em; text-transform:uppercase; color:#b9b2a4;">Generating <span data-mc-wave data-chars="14" data-speed="7" style="font-size:19px; letter-spacing:1px;">&#9604;&#9605;&#9606;&#9607;&#9608;&#9607;&#9606;&#9605;&#9604;&#9603;&#9602;&#9601;&#9602;&#9603;</span></div>
+              </sc-if>
+              <sc-if value="{{ toolIdle }}" hint-placeholder-val="{{ true }}">
+                <div style="flex:1; font-size:15px; line-height:1.6; color:#d9d2c5;">{{ toolOutput }}</div>
+              </sc-if>
             </div>
           </div>
         </sc-if>
@@ -529,7 +541,7 @@ class Component extends DCLogic {
       routineFilter: 'all', routineQuery: '',
       toolFilter: 'all', toolQuery: '',
       videoFilter: 'all', videoQuery: '',
-      toolInput: '', toolRan: false,
+      toolInput: '', toolRan: false, toolRunning: false,
       per: 20, win: 120, wout: 300, tier: 'balanced',
     };
     this.tiers = {
@@ -674,6 +686,7 @@ class Component extends DCLogic {
   }
 
   componentWillUnmount() {
+    if (this._runTimer) { clearTimeout(this._runTimer); this._runTimer = null; }
     document.removeEventListener('pointerdown', this._onDown, true);
     document.removeEventListener('pointermove', this._onMove, true);
     document.removeEventListener('pointerup', this._onUp, true);
@@ -682,7 +695,12 @@ class Component extends DCLogic {
 
   go(page) { this.setState({ page }); try { window.scrollTo(0, 0); } catch (e) {} }
   openPrompt(id) { this.setState({ page: 'prompt', selPromptId: id, copiedId: null }); try { window.scrollTo(0, 0); } catch (e) {} }
-  openTool(id) { this.setState({ page: 'tool', selToolId: id, toolInput: '', toolRan: false }); try { window.scrollTo(0, 0); } catch (e) {} }
+  openTool(id) { if (this._runTimer) { clearTimeout(this._runTimer); this._runTimer = null; } this.setState({ page: 'tool', selToolId: id, toolInput: '', toolRan: false, toolRunning: false }); try { window.scrollTo(0, 0); } catch (e) {} }
+  runTool() {
+    if (this._runTimer) clearTimeout(this._runTimer);
+    this.setState({ toolRunning: true, toolRan: false });
+    this._runTimer = setTimeout(() => { this._runTimer = null; this.setState({ toolRunning: false, toolRan: true }); }, 1150);
+  }
 
   scrollRow(e, dir) {
     const sec = e.currentTarget && e.currentTarget.closest('section');
@@ -808,6 +826,7 @@ class Component extends DCLogic {
     const toolOutput = s.toolRan
       ? 'Prototype: this is where your result will appear. (You entered ' + s.toolInput.trim().length + ' characters.) The working version is on the way.'
       : 'Type something on the left and press the button to see how this tool will work.';
+    const toolRunning = s.toolRunning, toolIdle = !s.toolRunning;
 
     // ---- Videos ----
     const vq = s.videoQuery.trim().toLowerCase();
@@ -845,7 +864,7 @@ class Component extends DCLogic {
       toolFolders, toolsEmpty, toolChips, homeTools,
       toolQuery: s.toolQuery, setToolQuery: (e) => this.setState({ toolQuery: e.target.value }),
       selTool, toolInput: s.toolInput, setToolInput: (e) => this.setState({ toolInput: e.target.value }),
-      runTool: () => this.setState({ toolRan: true }), toolOutput,
+      runTool: () => this.runTool(), toolOutput, toolRunning, toolIdle,
       vFeatured, videoFolders, videosEmpty, videoChips,
       videoQuery: s.videoQuery, setVideoQuery: (e) => this.setState({ videoQuery: e.target.value }),
       homeVideos: this.videos.slice(0, 4),
@@ -963,23 +982,52 @@ class Component extends DCLogic {
   var loader = document.getElementById('mc-loader');
   var wave = document.getElementById('mc-wave');
 
-  /* ---- ASCII loader: a flowing character wave inside corner brackets ---- */
-  var RAMP = ' .:-=+*#%@', N = 22;
-  var BR = '│', TL = '┌', TR = '┐', BL = '└', BRr = '┘', H = '─';
-  var TOP = TL + new Array(N + 3).join(H) + TR;
-  var BOT = BL + new Array(N + 3).join(H) + BRr;
+  /* ---- ASCII loader: the signature block-wave (matches the brand signature mark) ---- */
+  var BLOCK = ['▁','▂','▃','▄','▅','▆','▇','█'], N = 13;
   var t0 = (window.performance && performance.now) ? performance.now() : Date.now(), waveRAF = 0;
   function drawWave(now){
-    var t = ((now || Date.now()) - t0) / 1000, mid = '';
+    var t = ((now || Date.now()) - t0) / 1000, s = '';
     for (var i = 0; i < N; i++){
-      var v = 0.5 + 0.5 * Math.sin(t * 3.4 - i * 0.5);
-      var ch = RAMP.charAt(Math.max(0, Math.min(RAMP.length - 1, Math.round(v * (RAMP.length - 1)))));
-      mid += (v > 0.86) ? '<span class="o">' + ch + '</span>' : ch;
+      var x = i / (N - 1);
+      var env = 0.35 + 0.65 * Math.sin(Math.PI * x);            /* swell to the centre */
+      var carrier = 0.5 + 0.5 * Math.sin(t * 4.2 - i * 0.62);   /* travelling sine */
+      var v = env * carrier, k = Math.round(v * 7);
+      s += BLOCK[k < 0 ? 0 : k > 7 ? 7 : k];
     }
-    wave.innerHTML = TOP + '\n' + BR + ' ' + mid + ' ' + BR + '\n' + BOT;
+    wave.textContent = s;
     if (!RM) waveRAF = requestAnimationFrame(drawWave);
   }
   if (wave) drawWave(t0);
+
+  /* ---- the signature wave, wherever the app asks for it: any [data-mc-wave] element ---- */
+  var WB = ['▁','▂','▃','▄','▅','▆','▇','█'], liveWaves = [], wRAF = 0;
+  function renderWave(n, t, speed, phase){
+    var s = '';
+    for (var i = 0; i < n; i++){ var v = 0.5 + 0.5 * Math.sin(t * speed - i * phase); var k = Math.round(v * 7); s += WB[k < 0 ? 0 : k > 7 ? 7 : k]; }
+    return s;
+  }
+  function waveTick(now){
+    var t = ((now || Date.now()) - t0) / 1000, alive = [];
+    for (var i = 0; i < liveWaves.length; i++){ var w = liveWaves[i]; if (!w.el.isConnected) continue; w.el.textContent = renderWave(w.n, t, w.speed, w.phase); alive.push(w); }
+    liveWaves = alive;
+    wRAF = (!RM && liveWaves.length) ? requestAnimationFrame(waveTick) : 0;
+  }
+  function mountWaves(root){
+    var els = (root || document).querySelectorAll('[data-mc-wave]:not([data-mc-on])');
+    for (var i = 0; i < els.length; i++){ var el = els[i]; el.setAttribute('data-mc-on', '1');
+      var n = +el.getAttribute('data-chars') || 12, speed = +el.getAttribute('data-speed') || 6.5, phase = +el.getAttribute('data-phase') || 0.6;
+      el.style.fontFamily = "'Space Mono',ui-monospace,Menlo,monospace"; el.style.whiteSpace = 'pre'; el.style.color = el.getAttribute('data-color') || '#F2541B';
+      if (RM){ el.textContent = renderWave(n, 0, speed, phase); continue; }
+      liveWaves.push({ el: el, n: n, speed: speed, phase: phase });
+    }
+    if (!RM && liveWaves.length && !wRAF) wRAF = requestAnimationFrame(waveTick);
+  }
+
+  /* ---- one crisp enter transition each time a new screen mounts ---- */
+  function markEnter(root){
+    var els = root.querySelectorAll('[data-screen-label]:not([data-mc-enter])');
+    for (var i = 0; i < els.length; i++){ els[i].setAttribute('data-mc-enter', '1'); els[i].classList.add('mc-enter'); }
+  }
 
   /* ---- mount the dot icons + tag interactive elements for the corner-bracket hover, now and on every navigation ---- */
   function tagFx(root){
@@ -989,8 +1037,8 @@ class Component extends DCLogic {
   function startMounts(){
     try { if (window.MCdots) MCdots.mountAll(document); } catch(e){}
     var root = document.getElementById('dc-root'); if (!root) return;
-    tagFx(root);
-    new MutationObserver(function(){ try { if (window.MCdots) MCdots.mountAll(root); tagFx(root); } catch(e){} }).observe(root, { childList: true, subtree: true });
+    tagFx(root); mountWaves(root); markEnter(root);
+    new MutationObserver(function(){ try { if (window.MCdots) MCdots.mountAll(root); tagFx(root); mountWaves(root); markEnter(root); } catch(e){} }).observe(root, { childList: true, subtree: true });
   }
 
   /* ---- remove the loader once the app has mounted (held a minimum time so it is seen) ---- */
