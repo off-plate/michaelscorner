@@ -14,7 +14,7 @@ jobs:
       - name: Assemble publish dir (site files only)
         run: |
           mkdir -p _site
-          cp index.html support.js 404.html .nojekyll _site/
+          cp index.html support.js 404.html .nojekyll portrait.jpg _site/
 
       - name: Deploy site to Netlify
         run: |
